@@ -10,7 +10,9 @@ import imgImmersive from '../assets/solutions-jewellery.png';
 import workcommit from '../assets/workcommit.png';
 import oneteam from '../assets/oneteam.png';
 import builttolast from '../assets/builttolast.png';
-
+import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
+import logoInverted from "../assets/logo inverted.png";
+//  src={logoInverted}
 // ── VIDEO ──────────────────────────────────────────────────────────────────────
 const demoVideo = '/video/AI3Dgenerator.mp4';
 const videoJewellery = '/video/Virtual_tryon.mp4';
@@ -177,12 +179,17 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleScroll = () => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    setScrolled(scrollY > 10);
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('scroll', handleScroll, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('scroll', handleScroll);
+  };
+}, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -464,10 +471,10 @@ export default function HomePage() {
         onClick={handleSmoothScroll}
       >
         <img
-          src="src/assets/PHOTO-2025-12-18-10-27-20.png"
-          alt="Pixrity Logo"
-          className="logo-watermark-icon"
-        />
+    src={pixrityLogo}
+    alt="Pixrity Logo"
+    className="logo-watermark-icon"
+  />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
         </div>
@@ -743,7 +750,7 @@ export default function HomePage() {
       {/* Container for Logo + Brand Name */}
       <div className="footer-logo-container">
         <img 
-          src="src\assets\logo inverted.png" // Replace with your actual image path or import variable
+          src={logoInverted}
           alt="PIXRITY Logo" 
           className="footer-logo-img" 
         />
@@ -841,4 +848,3 @@ export default function HomePage() {
     </>
   );
 }
-HomePage.jsx

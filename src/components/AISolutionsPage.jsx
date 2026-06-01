@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import '../styles/AISolutionsPage.css';
+import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
+import logoInverted from "../assets/logo inverted.png";
 
 
 function useScrollReveal() {
@@ -190,10 +192,17 @@ export default function AISolutionsPage() {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => { setScrolled(window.scrollY > 60); };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleScroll = () => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    setScrolled(scrollY > 10);
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('scroll', handleScroll, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('scroll', handleScroll);
+  };
+}, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -295,12 +304,13 @@ export default function AISolutionsPage() {
                 <a href="/immersive-industrial" className="cmd-item" onClick={(e) => { e.preventDefault(); navigate('/immersive-industrial'); setDropdownOpen(false); }}>
                   Industrial Solutions
                 </a>
-                <a href="/ai-solutions" className="cmd-item cmd-item-active">
-                  Agentic AI Solutions
-                </a>
                 <a href="/immersive-advertising" className="cmd-item" onClick={(e) => { e.preventDefault(); navigate('/immersive-advertising'); setDropdownOpen(false); }}>
                   Immersive Advertising
                 </a>
+                <a href="/ai-solutions" className="cmd-item cmd-item-active">
+                  Agentic AI Solutions
+                </a>
+                
               </div>
             )}
           </div>
@@ -328,7 +338,7 @@ export default function AISolutionsPage() {
       {/* LOGO */}
       <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home"
         onClick={(e) => { e.preventDefault(); navigate('/'); }}>
-        <img src="src/assets/PHOTO-2025-12-18-10-27-20.png" alt="Pixrity Logo" className="logo-watermark-icon" />
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
           {/* <span className="logo-tagline">Transforming Experience</span> */}
@@ -534,7 +544,7 @@ export default function AISolutionsPage() {
          <div className="footer-brand">
             <div className="footer-logo-container">
         <img 
-          src="src\assets\logo inverted.png" // Replace with your actual image path or import variable
+           src={logoInverted}
           alt="PIXRITY Logo" 
           className="footer-logo-img" 
         />

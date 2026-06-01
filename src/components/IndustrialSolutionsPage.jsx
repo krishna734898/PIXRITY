@@ -9,6 +9,8 @@ import imgIntelligent     from '../assets/card3.png';
 import imgBuiltToLast     from '../assets/Training_Onboarding.png';
 import imgOneteam         from '../assets/card5real.png';
 import imgSolutionsJewel  from '../assets/card6.png';
+import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
+import logoInverted from "../assets/logo inverted.png";
 
 function useSnapReveal() {
   useEffect(() => {
@@ -34,13 +36,13 @@ export default function IndustrialSolutionsPage() {
 
   useSnapReveal();
 
-  useEffect(() => {
-    const el = snapPageRef.current;
-    const handleScroll = () => setScrolled((el ? el.scrollTop : window.scrollY) > 60);
-    const target = el || window;
-    target.addEventListener('scroll', handleScroll, { passive: true });
-    return () => target.removeEventListener('scroll', handleScroll);
-  }, []);
+useEffect(() => {
+  const el = snapPageRef.current;
+  if (!el) return;
+  const handleScroll = () => setScrolled(el.scrollTop > 10);
+  el.addEventListener('scroll', handleScroll, { passive: true });
+  return () => el.removeEventListener('scroll', handleScroll);
+}, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -199,7 +201,11 @@ export default function IndustrialSolutionsPage() {
   return (
     <>
       {/* FIXED NAV */}
-      <nav className={scrolled ? 'nav-scrolled' : ''}>
+      <nav className={scrolled ? 'nav-scrolled' : ''} style={scrolled ? {
+  background: '#ffffff',
+  borderBottom: '1px solid #e2e8f0',
+  boxShadow: '0 2px 16px rgba(5,0,64,0.06)'
+} : {}}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
           <a href="/">Home</a>
           <a
@@ -267,7 +273,7 @@ export default function IndustrialSolutionsPage() {
 
       {/* LOGO WATERMARK */}
       <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
-        <img src="src/assets/PHOTO-2025-12-18-10-27-20.png" alt="Pixrity Logo" className="logo-watermark-icon" />
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
           {/* <span className="logo-tagline">Transforming Experience</span> */}
@@ -467,7 +473,7 @@ export default function IndustrialSolutionsPage() {
              <div className="footer-brand">
             <div className="footer-logo-container">
         <img 
-          src="src\assets\logo inverted.png" // Replace with your actual image path or import variable
+           src={logoInverted}
           alt="PIXRITY Logo" 
           className="footer-logo-img" 
         />

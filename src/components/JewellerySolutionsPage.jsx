@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import '../styles/JewellerySolutionsPage.css';
+import instoreImg from '../assets/instore11.jpg';
+import ecommerceImg from '../assets/ecommerce1.jpeg';
+import digitaladsImg from '../assets/Digitalads1.jpg';
+import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
+import logoInverted from "../assets/logo inverted.png";
 
 function useScrollReveal() {
   const ref = useRef(null);
@@ -45,10 +50,17 @@ export default function JewellerySolutionsPage() {
   };
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleScroll = () => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    setScrolled(scrollY > 10);
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('scroll', handleScroll, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('scroll', handleScroll);
+  };
+}, []);
 
   useEffect(() => {
     const handleEscape = (e) => { if (e.key === 'Escape') { setMenuOpen(false); setDropdownOpen(false); } };
@@ -315,7 +327,7 @@ export default function JewellerySolutionsPage() {
 
       {/* LOGO WATERMARK */}
       <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
-        <img src="src/assets/PHOTO-2025-12-18-10-27-20.png" alt="Pixrity Logo" className="logo-watermark-icon" />
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
         </div>
@@ -465,7 +477,7 @@ export default function JewellerySolutionsPage() {
           <div className="j-platform-anchors">
             <a href="#j-sol1" className="j-anchor-card j-anchor-card--img" onClick={handleSmoothScroll}>
               <div className="j-anchor-img-wrap">
-                <img src="src/assets/instore11.jpg" alt="In-Store Smart Solution" />
+                <img src={instoreImg} alt="In-Store Smart Solution" />
               </div>
               <div className="j-anchor-card-body">
                 <span className="j-anchor-title">In-Store Smart Solution</span>
@@ -474,7 +486,7 @@ export default function JewellerySolutionsPage() {
             </a>
             <a href="#j-sol2" className="j-anchor-card j-anchor-card--img" onClick={handleSmoothScroll}>
               <div className="j-anchor-img-wrap">
-                <img src="src/assets/ecommerce1.jpeg" alt="Ecommerce Integration Solution" />
+                <img src={ecommerceImg} alt="Ecommerce Integration Solution" />
               </div>
               <div className="j-anchor-card-body">
                 <span className="j-anchor-title">Ecommerce Integration Solution</span>
@@ -483,7 +495,7 @@ export default function JewellerySolutionsPage() {
             </a>
             <a href="#j-sol3" className="j-anchor-card j-anchor-card--img" onClick={handleSmoothScroll}>
               <div className="j-anchor-img-wrap">
-                <img src="src/assets/Digitalads1.jpg" alt="Immersive Advertising Solution" />
+                <img src={digitaladsImg} alt="Immersive Advertising Solution" />
               </div>
               <div className="j-anchor-card-body">
                 <span className="j-anchor-title">Immersive Advertising Solution</span>
@@ -865,7 +877,7 @@ export default function JewellerySolutionsPage() {
           <div className="footer-brand">
             <div className="footer-logo-container">
         <img 
-          src="src\assets\logo inverted.png" // Replace with your actual image path or import variable
+           src={logoInverted}
           alt="PIXRITY Logo" 
           className="footer-logo-img" 
         />

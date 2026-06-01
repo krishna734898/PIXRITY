@@ -1506,7 +1506,7 @@
 }
 
 /* ── COMMAND PALETTE DROPDOWN ── */
-nav.nav-scrolled {
+/* nav.nav-scrolled {
   background: rgba(255, 255, 255, 0.18);
   border-bottom: 1px solid rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(18px) saturate(1.6);
@@ -1518,15 +1518,15 @@ nav.nav-scrolled #menu a,
 nav.nav-scrolled .dropdown > span {
   color: var(--brand);
   font-weight: 600;
-}
+} */
 
-.logo-watermark.logo-scrolled {
+/* .logo-watermark.logo-scrolled {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(255, 255, 255, 0.28);
   box-shadow: 0 2px 12px rgba(5, 0, 64, 0.06);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-}
+} */
 
 .cmd-dropdown {
   position: relative;

@@ -65,10 +65,17 @@ export default function ProductPage() {
 
   // Nav scroll glass effect
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const handleScroll = () => {
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    setScrolled(scrollY > 10);
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  document.addEventListener('scroll', handleScroll, { passive: true });
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+    document.removeEventListener('scroll', handleScroll);
+  };
+}, []);
 
   // Escape / outside-click to close menu
   useEffect(() => {
