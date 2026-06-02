@@ -299,13 +299,13 @@ export default function AISolutionsPage() {
             {dropdownOpen && (
               <div className="cmd-panel">
                 <a href="/jewellery-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); navigate('/jewellery-solutions'); setDropdownOpen(false); }}>
-                  Jewellery Solutions
+                  Immersive Jewellery Solutions
                 </a>
                 <a href="/immersive-industrial" className="cmd-item" onClick={(e) => { e.preventDefault(); navigate('/immersive-industrial'); setDropdownOpen(false); }}>
-                  Industrial Solutions
+                  Immersive Industrial Solutions
                 </a>
                 <a href="/immersive-advertising" className="cmd-item" onClick={(e) => { e.preventDefault(); navigate('/immersive-advertising'); setDropdownOpen(false); }}>
-                  Immersive Advertising
+                  Immersive Advertising Solutions
                 </a>
                 <a href="/ai-solutions" className="cmd-item cmd-item-active">
                   Agentic AI Solutions

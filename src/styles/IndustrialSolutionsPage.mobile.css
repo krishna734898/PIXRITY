@@ -1,0 +1,162 @@
+/* ===========================================================================
+   MOBILE RESPONSIVE ARCHITECTURE — IndustrialSolutionsPage
+   Applies isolated, scoped layout mechanics to prevent cross-page leakage.
+   =========================================================================== */
+
+/* ── NATIVE HEIGHT & SCROLL RESTORATIONS ── */
+@media (max-width: 767px) {
+  html:has(.is-mobile-adaptive-viewport),
+  body:has(.is-mobile-adaptive-viewport) {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  .is-mobile-adaptive-viewport .snap-page {
+    height: auto !important;
+    overflow-y: visible !important;
+    scroll-snap-type: none !important;
+  }
+
+  .is-mobile-adaptive-viewport .snap-section {
+    scroll-snap-align: none !important;
+    scroll-snap-stop: unset !important;
+    min-height: unset !important;
+    height: auto !important;
+    padding: 64px 20px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-solutions-snap {
+    padding-top: 80px !important;
+  }
+}
+
+/* ── GRID COLLAPSING & SCROLL-HOVER SYSTEMS ── */
+@media (max-width: 1024px) {
+  .is-mobile-adaptive-viewport .is-problems-grid,
+  .is-mobile-adaptive-viewport .is-xr-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-problems-grid,
+  .is-mobile-adaptive-viewport .is-xr-cards-grid,
+  .is-mobile-adaptive-viewport .is-steps-grid,
+  .is-mobile-adaptive-viewport .is-enables-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-xr-card-img-wrap {
+    height: 180px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-step-connector {
+    display: none !important;
+  }
+
+  /* ── 1. COLLAPSE INTERNAL ELEMENTS BY DEFAULT ── */
+  .is-mobile-adaptive-viewport .is-problem-desc,
+  .is-mobile-adaptive-viewport .is-step-desc,
+  .is-mobile-adaptive-viewport .is-step-points {
+    opacity: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    margin-top: 0 !important;
+    transition: opacity 0.3s ease, max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-xr-card-overlay {
+    opacity: 0 !important;
+    transform: translateY(100%) !important;
+    transition: opacity 0.35s ease, transform 0.35s ease !important;
+    background: linear-gradient(
+      to top,
+      rgba(5, 0, 64, 0.98) 0%,
+      rgba(5, 0, 64, 0.75) 70%,
+      rgba(5, 0, 64, 0.4) 100%
+    ) !important;
+  }
+
+  /* ── 2. SCROLL TRIGGERED ACTIVE HOVER STATES ── */
+  
+  /* Problem Cards - Scroll Open */
+  .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover {
+    box-shadow: 0 12px 40px rgba(5, 0, 64, 0.1) !important;
+    border-color: var(--card-stripe, var(--accent)) !important;
+  }
+  .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover::before {
+    transform: scaleX(1) !important;
+  }
+  .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover .is-problem-desc {
+    opacity: 1 !important;
+    max-height: 140px !important;
+    margin-top: 8px !important;
+  }
+
+  /* XR Product Overlays - Scroll Open */
+  .is-mobile-adaptive-viewport .is-xr-card.is-mobile-hover {
+    box-shadow: 0 20px 56px rgba(5, 0, 64, 0.13) !important;
+    border-color: rgba(59, 59, 255, 0.25) !important;
+  }
+  .is-mobile-adaptive-viewport .is-xr-card.is-mobile-hover .is-xr-card-img {
+    transform: scale(1.06) !important;
+  }
+  .is-mobile-adaptive-viewport .is-xr-card.is-mobile-hover .is-xr-card-overlay {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  /* Process Step Progression - Scroll Open */
+  .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover {
+    box-shadow: 0 12px 40px rgba(5,0,64,0.09) !important;
+  }
+  .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover .is-step-desc {
+    opacity: 1 !important;
+    max-height: 120px !important;
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover .is-step-points {
+    opacity: 1 !important;
+    max-height: 250px !important;
+  }
+}
+
+/* ── TYPOGRAPHY & BUTTON STACKING ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-hero-headline,
+  .is-mobile-adaptive-viewport .section-headline,
+  .is-mobile-adaptive-viewport .is-problems-headline,
+  .is-mobile-adaptive-viewport .is-enables-headline,
+  .is-mobile-adaptive-viewport .cta-headline {
+    font-size: clamp(1.8rem, 7vw, 2.4rem) !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-hero-description,
+  .is-mobile-adaptive-viewport .section-intro,
+  .is-mobile-adaptive-viewport .is-enables-sub,
+  .is-mobile-adaptive-viewport .cta-sub {
+    text-align: center !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .is-mobile-adaptive-viewport .cta-container {
+    flex-direction: column !important;
+    width: 100%;
+    gap: 12px !important;
+  }
+
+  .is-mobile-adaptive-viewport .cta-container button,
+  .is-mobile-adaptive-viewport .cta-container a {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}

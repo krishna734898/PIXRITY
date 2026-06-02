@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/ImmersiveAdvertisingPage.css';
+import '../styles/ImmersiveAdvertisingPage.mobile.css';
 import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
 import logoInverted from "../assets/logo inverted.png";
 
@@ -234,13 +235,13 @@ export default function ImmersiveAdvertisingPage() {
             {dropdownOpen && (
               <div className="cmd-panel">
                 <a href="/jewellery-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/jewellery-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
-                  Jewellery Solutions
+                  Immersive Jewellery Solutions
                 </a>
                 <a href="/immersive-industrial" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/immersive-industrial'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
-                  Industrial Solutions
+                  Immersive Industrial Solutions
                 </a>
                 <a href="/immersive-advertising" className="cmd-item cmd-item-active">
-                  Immersive Advertising
+                  Immersive Advertising Solutions
                 </a>
                 <a href="/ai-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/ai-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
                   Agentic AI Solutions
@@ -343,14 +344,14 @@ export default function ImmersiveAdvertisingPage() {
             <span className="ia-heading-line">not just something to see?</span>
           </h2>
           <div className="section-intro">
-            <p>Immersive advertising is not a better version of what you are already running. It is a different category entirely.<button
+            <p>Immersive advertising is not a better version of what you are already running. It is a different category entirely.</p><button
               type="button"
               className="ia-learn-more-btn ia-solution-learn-more"
               onClick={() => setLearnMoreOpen(v => !v)}
               aria-expanded={learnMoreOpen}
             >
               {learnMoreOpen ? 'Show less' : 'Learn more'}
-            </button></p>
+            </button>
             
             <div className={`ia-learn-more-content ${learnMoreOpen ? 'open' : ''}`}>
               <p>Instead of showing your customer what your product looks like, you let them experience it inside the Ad itself. They interact with it. They try it. They rotate it, explore it, personalise it. They spend two to three minutes with your product before they have clicked anything. They arrive at your store or website having already decided.</p>
@@ -409,13 +410,16 @@ export default function ImmersiveAdvertisingPage() {
       {/* ── 04 SERVICE 01 — SOCIAL ── */}
       <section className="ia-section ia-service1-section" id="ia-service1" ref={service1Ref}>
         <div className={`section-inner ia-service-two-col ${service1Visible ? 'reveal' : ''}`}>
+          
+          {/* LEFT COLUMN: TEXT & INFORMATION */}
           <div className="ia-service-left">
-            <span className="section-label">Solution</span>
+            <span className="section-label">Solution 01</span>
             <h2 className="section-headline">
               <span className="ia-heading-line">Immersive Social</span><br />
               <span className="headline-accent ia-heading-line">Media Ads</span>
             </h2>
             <p className="ia-service-subhead">Your social Ad should be something your customer plays with, not scrolls past.</p>
+            
             <div className="ia-explainer-box">
               <p className="ia-explainer-lead">You know how Instagram and Snapchat let you put filters on your face using the camera?</p>
               <p>That same technology applied to your product.</p>
@@ -472,11 +476,13 @@ export default function ImmersiveAdvertisingPage() {
               </div>
             </div>
 
-            <div className="ia-service-cta">
+            {/* BUTTON 1: DESKTOP ONLY VIEWPORT (Hidden automatically on mobile/tabs via CSS) */}
+            <div className="ia-service-cta ia-desktop-cta">
               <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Social Ad Demo for Your Product</button>
             </div>
           </div>
 
+          {/* RIGHT COLUMN: PHONE MOCKUP HOUSING THE VIDEO */}
           <div className="ia-service-right">
             <div className="ia-phone-wrap">
               <div className="ia-phone-shell">
@@ -489,12 +495,20 @@ export default function ImmersiveAdvertisingPage() {
               <div className="ia-phone-glow" />
             </div>
           </div>
+
+          {/* BUTTON 2: MOBILE/TABLET VIEWPORT ONLY (Sits at the absolute end, below the phone video) */}
+          <div className="ia-service-cta ia-mobile-cta">
+            <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Social Ad Demo for Your Product</button>
+          </div>
+
         </div>
       </section>
 
-      {/* ── 05 SERVICE 02 — PRINT ── */}
+     {/* ── 05 SERVICE 02 — PRINT ── */}
       <section className="ia-section ia-service2-section" id="ia-service2" ref={service2Ref}>
         <div className={`section-inner ia-service2-three-col ${service2Visible ? 'reveal' : ''}`}>
+          
+          {/* LEFT COLUMN: LAPTOP ACCENT SCREEN */}
           <div className="ia-service2-video-left">
             <div className="ia-screen-wrap">
               <div className="ia-screen-shell">
@@ -510,8 +524,9 @@ export default function ImmersiveAdvertisingPage() {
             </div>
           </div>
 
+          {/* MIDDLE COLUMN: CONTENT CARD */}
           <div className="ia-service2-content">
-            <span className="section-label">Solution</span>
+            <span className="section-label">Solution 02</span>
             <h2 className="section-headline">
               <span className="ia-heading-line">Immersive Print</span><br />
               <span className="headline-accent ia-heading-line">Media Ads</span>
@@ -573,11 +588,13 @@ export default function ImmersiveAdvertisingPage() {
               </div>
             </div>
 
-            <div className="ia-service-cta">
+            {/* BUTTON 1: DESKTOP ONLY (Disappears on mobile/tablet view via CSS) */}
+            <div className="ia-service-cta ia-desktop-cta">
               <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Print Ad Demo</button>
             </div>
           </div>
 
+          {/* RIGHT COLUMN: PHONE VIDEO MOCKUP */}
           <div className="ia-service2-video-right">
             <div className="ia-phone-wrap">
               <div className="ia-phone-shell">
@@ -590,9 +607,14 @@ export default function ImmersiveAdvertisingPage() {
               <div className="ia-phone-glow" />
             </div>
           </div>
+
+          {/* BUTTON 2: MOBILE/TABLET ONLY (Sits perfectly at the end of the stacked section) */}
+          <div className="ia-service-cta ia-mobile-cta">
+            <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Print Ad Demo</button>
+          </div>
+
         </div>
       </section>
-
       {/* ── 06 COMPARISON ── */}
       <section className="ia-comparison-section" id="ia-comparison" ref={comparisonRef}>
         <div className={`ia-comparison-inner ${comparisonVisible ? 'reveal' : ''}`}>

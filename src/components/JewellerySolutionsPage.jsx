@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import '../styles/JewellerySolutionsPage.css';
+import '../styles/JewellerySolutionsPage.mobile.css';
 import instoreImg from '../assets/instore11.jpg';
 import ecommerceImg from '../assets/ecommerce1.jpeg';
 import digitaladsImg from '../assets/Digitalads1.jpg';

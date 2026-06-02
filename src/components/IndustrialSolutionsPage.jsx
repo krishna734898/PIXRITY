@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import '../styles/IndustrialSolutionsPage.css';
+import '../styles/IndustrialSolutionsPage.mobile.css'; 
 
 // ── Project asset images ──
 import imgHero            from '../assets/product_visualization.png';
@@ -28,6 +29,36 @@ function useSnapReveal() {
   }, []);
 }
 
+// ── NEW: Mobile Scroll-Hover Interaction Hook ──
+function useMobileHoverOnScroll() {
+  useEffect(() => {
+    // Only run this engine on mobile viewport widths
+    if (window.innerWidth > 767) return;
+
+    const cards = document.querySelectorAll('.is-problem-card, .is-xr-card, .is-step-card');
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-mobile-hover');
+          } else {
+            entry.target.classList.remove('is-mobile-hover');
+          }
+        });
+      },
+      {
+        // Root margin targets elements when they cross the middle 40% vertical band of the phone screen
+        rootMargin: '-30% 0px -30% 0px',
+        threshold: 0.2
+      }
+    );
+
+    cards.forEach((c) => observer.observe(c));
+    return () => observer.disconnect();
+  }, []);
+}
+
 export default function IndustrialSolutionsPage() {
   const [menuOpen, setMenuOpen]       = useState(false);
   const [scrolled, setScrolled]       = useState(false);
@@ -35,14 +66,15 @@ export default function IndustrialSolutionsPage() {
   const snapPageRef = useRef(null);
 
   useSnapReveal();
+  useMobileHoverOnScroll(); // Activating scroll-triggered card effects
 
-useEffect(() => {
-  const el = snapPageRef.current;
-  if (!el) return;
-  const handleScroll = () => setScrolled(el.scrollTop > 10);
-  el.addEventListener('scroll', handleScroll, { passive: true });
-  return () => el.removeEventListener('scroll', handleScroll);
-}, []);
+  useEffect(() => {
+    const el = snapPageRef.current;
+    if (!el) return;
+    const handleScroll = () => setScrolled(el.scrollTop > 10);
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -81,7 +113,6 @@ useEffect(() => {
   };
 
   // ── DATA ──────────────────────────────────────────────────────────────────
-
   const problems = [
     { num: '01', title: 'Large & Complex',        label: 'Size & Complexity',  desc: 'Industrial products are often too massive or intricate to convey through standard photography or 2D catalogs.' },
     { num: '02', title: 'Expensive to Transport', label: 'Logistics Cost',     desc: 'Moving heavy machinery for exhibitions or client trials incurs massive shipping and insurance costs.' },
@@ -91,80 +122,42 @@ useEffect(() => {
     { num: '06', title: 'Assembly Struggle',      label: 'Complexity Hurdle',  desc: 'Without being able to "see inside," buyers struggle to grasp complex assemblies and maintenance requirements.' },
   ];
 
-  // 6 XR solution cards — images from project assets
   const xrSolutions = [
     {
       num: '01',
       title: 'Immersive Product Visualization',
       img: imgHero,
       desc: 'Experience products in lifelike 3D through interactive XR for better understanding and faster decisions.',
-      points: [
-        'View products in true and across scale',
-        'Transform (rotate, zoom), inspect, and explore',
-        'Understand dimensions, finishes, assemblies',
-        'Show fitment in real environments',
-        'Reduce installation and service errors',
-      ],
     },
     {
       num: '02',
       title: 'Interactive Product Exploration',
       img: imgExecution,
       desc: 'Explore every layer, component, and detail of complex products with intuitive interactive views.',
-      points: [
-        'Drill down into internal components',
-        'Explode-view assemblies in real time',
-        'Highlight specific parts on demand',
-        'Works on any modern smartphone',
-      ],
     },
     {
       num: '03',
       title: 'Product Understanding & Simulation',
       img: imgIntelligent,
       desc: 'Understand product functionality through realistic simulations and real world use case demonstrations.',
-      points: [
-        'Simulate operating conditions',
-        'Visualise flow paths and mechanical motion',
-        'Replace long PDFs with interactive demos',
-        'Reduce buyer objections instantly',
-      ],
     },
     {
       num: '04',
       title: 'Immersive Training & Simulation',
       img: imgBuiltToLast,
       desc: 'Enable safer, faster, and more effective workforce training through realistic virtual scenarios.',
-      points: [
-        'AR-guided step-by-step training modules',
-        'Faster technician onboarding',
-        'Higher retention, fewer field mistakes',
-        'No physical equipment required',
-      ],
     },
     {
       num: '05',
       title: 'Guided Assembly & Maintenance',
       img: imgOneteam,
       desc: 'Simplify assembly and servicing with step by step AR guided instructions and workflows.',
-      points: [
-        'Overlay instructions directly on the product',
-        'Reduce service call duration',
-        'Works offline after first load',
-        'Compatible with field technician tablets',
-      ],
     },
     {
       num: '06',
       title: 'AR Wayfinder for Inventory & Logistics',
       img: imgSolutionsJewel,
       desc: 'Navigate spaces and locate products efficiently with smart AR based wayfinding and indoor guidance.',
-      points: [
-        'Real-time indoor navigation via AR',
-        'Locate SKUs in large warehouses instantly',
-        'Integrate with existing ERP/WMS systems',
-        'Reduce pick errors and search time',
-      ],
     },
   ];
 
@@ -197,23 +190,18 @@ useEffect(() => {
     { icon: '⚡', text: 'Accelerated Buyer Decision Cycles' },
   ];
 
-  // ── RENDER ─────────────────────────────────────────────────────────────────
   return (
-    <>
+    <div className="is-mobile-adaptive-viewport">
       {/* FIXED NAV */}
       <nav className={scrolled ? 'nav-scrolled' : ''} style={scrolled ? {
-  background: '#ffffff',
-  borderBottom: '1px solid #e2e8f0',
-  boxShadow: '0 2px 16px rgba(5,0,64,0.06)'
-} : {}}>
+        background: '#ffffff',
+        borderBottom: '1px solid #e2e8f0',
+        boxShadow: '0 2px 16px rgba(5,0,64,0.06)'
+      } : {}}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
           <a href="/">Home</a>
-          <a
-        href="/product"
-        onClick={(e) => { e.preventDefault(); navigate('/product'); }}
-      >
-        Product
-      </a>
+          <a href="/product" onClick={(e) => { e.preventDefault(); navigate('/product'); }}>Product</a>
+          
           <div
             className="dropdown cmd-dropdown"
             onMouseEnter={() => setDropdownOpen(true)}
@@ -233,7 +221,7 @@ useEffect(() => {
                   Immersive Industrial Solutions
                 </a>
                 <a href="/immersive-advertising" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/immersive-advertising'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
-                  Immersive Advertising
+                  Immersive Advertising Solutions
                 </a>
                 <a href="/ai-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/ai-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
                   Agentic AI Solutions
@@ -241,9 +229,7 @@ useEffect(() => {
               </div>
             )}
           </div>
-          {/* <a href="#is-enables">About</a> */}
           <a href="#is-enables" onClick={handleSmoothScroll}>About</a>
-          {/* <a href="/">Insights</a> */}
           <a href="#is-how" onClick={handleSmoothScroll}>Insights</a>
           <button className="close-btn" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -252,17 +238,9 @@ useEffect(() => {
           </button>
         </div>
         <div className="nav-right">
-          {/* <button className="contact-btn" onClick={() => scrollTo('#is-final-cta')}>Book a Demo</button> */}
-          <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
+          <button className="contact-btn" onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}>
             Contact Us
-                </button>
+          </button>
           <button className="menu-toggle" id="open-menu" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4 12h16" /><path d="M4 18h16" /><path d="M4 6h16" />
@@ -276,7 +254,6 @@ useEffect(() => {
         <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
-          {/* <span className="logo-tagline">Transforming Experience</span> */}
         </div>
       </a>
 
@@ -296,22 +273,11 @@ useEffect(() => {
               products into digital experiences that sell globally.
             </p>
             <div className="cta-container">
-              {/* <a href="https://nzgvg.zappar-us.io/8456180594743457039/" target="_blank" rel="noopener noreferrer" className="btn-primary">
-                Book A Demo →
-              </a> */}
-               <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
-                  Book a Demo
-                </button>
+              <button className="contact-btn" onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}>
+                Book a Demo
+              </button>
               <button className="btn-secondary" onClick={() => scrollTo('#is-problems')}>Explore the Solutions</button>
             </div>
-            {/* <p className="is-hero-microcopy">No app required · Works on any smartphone · True-scale AR</p> */}
           </div>
         </section>
 
@@ -326,15 +292,11 @@ useEffect(() => {
                   Hard to Sell <span className="headline-accent">Digitally.</span>
                 </h2>
               </div>
-              {/* <p className="is-problems-sub">
-                Manufacturers build world class products, but showcasing them globally is extremely difficult.
-              </p> */}
             </div>
             <div className="is-problems-grid">
               {problems.map((p) => (
                 <div className="is-problem-card" key={p.num}>
                   <div className="is-problem-header">
-                    {/* <span className="is-problem-num">{p.num}</span> */}
                     <span className="is-problem-label">{p.label}</span>
                   </div>
                   <h3 className="is-problem-title">{p.title}</h3>
@@ -345,7 +307,7 @@ useEffect(() => {
           </div>
         </section>
 
-        {/* ── 03 XR SOLUTIONS — 2×3 card grid ── */}
+        {/* ── 03 XR SOLUTIONS ── */}
         <section className="snap-section is-solutions-snap" id="is-solutions">
           <div className="section-inner">
             <span className="section-label">Our Solutions</span>
@@ -355,26 +317,17 @@ useEffect(() => {
             </h2>
 
             <div className="is-xr-cards-grid">
-              {xrSolutions.map((s, idx) => (
+              {xrSolutions.map((s) => (
                 <div className="is-xr-card" key={s.num}>
-                  {/* Image with hover overlay */}
                   <div className="is-xr-card-img-wrap">
                     <img src={s.img} alt={s.title} className="is-xr-card-img" />
                     <div className="is-xr-card-overlay">
                       <p className="is-xr-card-overlay-desc">{s.desc}</p>
                     </div>
                   </div>
-
-                  {/* Card footer */}
                   <div className="is-xr-card-body">
                     <span className="is-xr-card-num">{s.num}</span>
                     <h3 className="is-xr-card-title">{s.title}</h3>
-                    <button
-                      className="is-xr-card-learn-more"
-                      onClick={() => scrollTo('#is-final-cta')}
-                    >
-                      {/* Explore → */}
-                    </button>
                   </div>
                 </div>
               ))}
@@ -442,45 +395,26 @@ useEffect(() => {
               Start showcasing with interactive XR.
             </p>
             <div className="cta-container">
-              {/* <a href="https://calendly.com/pixrity/30min" target="_blank" rel="noopener noreferrer" className="btn-primary">
-                Book a Demo →
-              </a> */}
-              <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
-                  Book a Demo
-                </button>
+              <button className="contact-btn" onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}>
+                Book a Demo
+              </button>
               <button className="btn-secondary" onClick={() => scrollTo('#is-solutions')}>
                 Explore Solutions →
               </button>
             </div>
-            {/* <div className="trust-signals" style={{ marginTop: '32px' }}>
-              <span>✓ Free demo · No advance required</span>
-              <span>✓ We show your actual product, not a generic example</span>
-              <span>✓ Works on any smartphone, no app download</span>
-            </div> */}
           </div>
         </section>
 
         {/* ── FOOTER ── */}
         <footer className="footer snap-footer">
           <div className="footer-inner">
-             <div className="footer-brand">
-            <div className="footer-logo-container">
-        <img 
-           src={logoInverted}
-          alt="PIXRITY Logo" 
-          className="footer-logo-img" 
-        />
-        <span className="footer-logo">PIXRITY</span>
-      </div>
-      <span className="footer-tagline">Transforming Experience</span>
-    </div>
+            <div className="footer-brand">
+              <div className="footer-logo-container">
+                <img src={logoInverted} alt="PIXRITY Logo" className="footer-logo-img" />
+                <span className="footer-logo">PIXRITY</span>
+              </div>
+              <span className="footer-tagline">Transforming Experience</span>
+            </div>
             <div className="footer-links">
               <div className="footer-col">
                 <span className="footer-col-label">Solutions</span>
@@ -488,7 +422,6 @@ useEffect(() => {
                 <a href="/immersive-industrial">Immersive Industrial Solutions</a>
                 <a href="/immersive-advertising">Immersive Advertising</a>
                 <a href="/">Agentic AI</a>
-                
               </div>
               <div className="footer-col">
                 <span className="footer-col-label">Product</span>
@@ -499,25 +432,14 @@ useEffect(() => {
                 <a href="/">About</a>
                 <a href="/">Insights</a>
                 <a href="#is-final-cta" onClick={handleSmoothScroll}>Contact</a>
-                <a
-                href="https://wa.me/917204466161"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="footer-whatsapp-link"
-              >
-                <span className="footer-whatsapp-icon" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />
-                  </svg>
-                </span>
-                Chat with us on WhatsApp
-              </a>
+                <a href="https://wa.me/917204466161" target="_blank" rel="noopener noreferrer" className="footer-whatsapp-link">
+                  <span className="footer-whatsapp-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />
+                    </svg>
+                  </span>
+                  Chat with us on WhatsApp
+                </a>
               </div>
             </div>
           </div>
@@ -528,6 +450,6 @@ useEffect(() => {
         </footer>
 
       </div>
-    </>
+    </div>
   );
 }

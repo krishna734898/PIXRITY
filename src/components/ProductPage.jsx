@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import '../styles/ProductPage.css';
 import '../styles/HomePage.css'; // nav styles live here
+import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
 
 const demoVideo = '/video/prod_main_vid.mp4';
 
@@ -215,7 +216,7 @@ export default function ProductPage() {
 
       {/* LOGO WATERMARK */}
       <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
-        <img src="src/assets/PHOTO-2025-12-18-10-27-20.png" alt="Pixrity Logo" className="logo-watermark-icon" />
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
           {/* <span className="logo-tagline">Transforming Experience</span> */}
