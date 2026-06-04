@@ -482,8 +482,8 @@ export default function ImmersiveAdvertisingPage() {
         <div className={`section-inner ${solutionVisible ? 'reveal' : ''}`}>
           <span className="section-label">Immersive Advertising</span>
           <h2 className="section-headline">
-            <span className="ia-heading-line">What if your Ad gave customers <span className="headline-accent">something to do,</span></span><br />
-            <span className="ia-heading-line">not just something to see?</span>
+            <span className="ia-heading-line">What if your Ad gave customers <span className="headline-accent">something to do,</span></span>
+            <span className="ia-heading-line"> not just something to see?</span>
           </h2>
           <div className="section-intro">
             <p>Immersive advertising is not a better version of what you are already running. It is a different category entirely.</p>
