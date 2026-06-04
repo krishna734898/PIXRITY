@@ -1,72 +1,108 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
 import '../styles/IndustrialSolutionsPage.css';
-import '../styles/IndustrialSolutionsPage.mobile.css'; 
+import '../styles/IndustrialSolutionsPage.mobile.css';
 
 // ── Project asset images ──
-import imgHero            from '../assets/product_visualization.png';
-import imgExecution       from '../assets/industrial_workful.png';
-import imgIntelligent     from '../assets/card3.png';
-import imgBuiltToLast     from '../assets/Training_Onboarding.png';
-import imgOneteam         from '../assets/card5real.png';
-import imgSolutionsJewel  from '../assets/card6.png';
-import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
-import logoInverted from "../assets/logo inverted.png";
+import imgHero           from '../assets/product_visualization.png';
+import imgExecution      from '../assets/industrial_workful.png';
+import imgIntelligent    from '../assets/card3.png';
+import imgBuiltToLast    from '../assets/Training_Onboarding.png';
+import imgOneteam        from '../assets/card5real.png';
+import imgSolutionsJewel from '../assets/card6.png';
+import pixrityLogo       from '../assets/PHOTO-2025-12-18-10-27-20.png';
+import logoInverted      from '../assets/logo inverted.png';
+
+// ─────────────────────────────────────────
+// HOOKS
+// ─────────────────────────────────────────
 
 function useSnapReveal() {
   useEffect(() => {
     const sections = document.querySelectorAll('.snap-section');
+    const isMobile = window.innerWidth <= 767;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) entry.target.classList.add('revealed');
         });
       },
-      { threshold: 0.4 }
+      { threshold: isMobile ? 0.1 : 0.4 }
     );
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, []);
 }
 
-// ── NEW: Mobile Scroll-Hover Interaction Hook ──
+// FIXED: delay so all cards are mounted, wider rootMargin for easier trigger
 function useMobileHoverOnScroll() {
   useEffect(() => {
-    // Only run this engine on mobile viewport widths
     if (window.innerWidth > 767) return;
 
-    const cards = document.querySelectorAll('.is-problem-card, .is-xr-card, .is-step-card');
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-mobile-hover');
-          } else {
-            entry.target.classList.remove('is-mobile-hover');
-          }
-        });
-      },
-      {
-        // Root margin targets elements when they cross the middle 40% vertical band of the phone screen
-        rootMargin: '-30% 0px -30% 0px',
-        threshold: 0.2
-      }
-    );
+    const attach = () => {
+      const cards = document.querySelectorAll(
+        '.is-problem-card, .is-xr-card, .is-step-card'
+      );
+      if (!cards.length) return;
 
-    cards.forEach((c) => observer.observe(c));
-    return () => observer.disconnect();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-mobile-hover');
+            } else {
+              entry.target.classList.remove('is-mobile-hover');
+            }
+          });
+        },
+        { rootMargin: '-15% 0px -15% 0px', threshold: 0.15 }
+      );
+
+      cards.forEach((c) => observer.observe(c));
+      return observer;
+    };
+
+    // Wait for DOM to fully paint
+    const timer = setTimeout(() => {
+      const obs = attach();
+      return () => obs?.disconnect();
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, []);
 }
 
+// ─────────────────────────────────────────
+// COMPONENT
+// ─────────────────────────────────────────
+
 export default function IndustrialSolutionsPage() {
-  const [menuOpen, setMenuOpen]       = useState(false);
-  const [scrolled, setScrolled]       = useState(false);
+
+  // ── STEP 1: ALL STATE + REFS ──────────────────────────────────────────────
+
+  const [menuOpen,     setMenuOpen]     = useState(false);
+  const [scrolled,     setScrolled]     = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const snapPageRef = useRef(null);
 
+  // Video refs
+  const videoRef     = useRef(null);
+  const hideTimerRef = useRef(null);
+
+  // Video state
+  const [isPlaying,       setIsPlaying]       = useState(false);
+  const [isMuted,         setIsMuted]         = useState(true);
+  const [progress,        setProgress]        = useState(0);
+  const [currentTime,     setCurrentTime]     = useState(0);
+  const [duration,        setDuration]        = useState(0);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [isFullscreen,    setIsFullscreen]    = useState(false);
+
+  // ── STEP 2: ALL USE-EFFECTS ───────────────────────────────────────────────
+
   useSnapReveal();
-  useMobileHoverOnScroll(); // Activating scroll-triggered card effects
+  useMobileHoverOnScroll();
 
   useEffect(() => {
     const el = snapPageRef.current;
@@ -87,16 +123,30 @@ export default function IndustrialSolutionsPage() {
         setMenuOpen(false);
     };
     document.addEventListener('keydown', handleEscape);
-    document.addEventListener('click', handleOutsideClick);
+    document.addEventListener('click',   handleOutsideClick);
     return () => {
       document.removeEventListener('keydown', handleEscape);
-      document.removeEventListener('click', handleOutsideClick);
+      document.removeEventListener('click',   handleOutsideClick);
     };
   }, [menuOpen]);
 
   useEffect(() => {
     document.body.classList.toggle('menu-open', menuOpen);
   }, [menuOpen]);
+
+  // Cleanup hide-timer on unmount
+  useEffect(() => {
+    return () => clearTimeout(hideTimerRef.current);
+  }, []);
+
+  // Fullscreen change listener (handles Esc key exit)
+  useEffect(() => {
+    const onFSChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFSChange);
+    return () => document.removeEventListener('fullscreenchange', onFSChange);
+  }, []);
+
+  // ── STEP 3: ALL HANDLER FUNCTIONS ────────────────────────────────────────
 
   const handleSmoothScroll = (e) => {
     const href = e.currentTarget.getAttribute('href');
@@ -112,7 +162,65 @@ export default function IndustrialSolutionsPage() {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Video handlers
+  const handleVideoToggle = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) { v.play();  setIsPlaying(true);  }
+    else          { v.pause(); setIsPlaying(false); }
+  };
+
+  const handleTimeUpdate = () => {
+    const v = videoRef.current;
+    if (!v || !v.duration) return;
+    setCurrentTime(v.currentTime);
+    setProgress((v.currentTime / v.duration) * 100);
+  };
+
+  const handleMetadata = () => {
+    if (videoRef.current) setDuration(videoRef.current.duration);
+  };
+
+  const handleSeek = (e) => {
+    const v = videoRef.current;
+    if (!v) return;
+    const rect  = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    v.currentTime = ratio * v.duration;
+  };
+
+  const handleFullscreen = () => {
+    const frame = videoRef.current?.closest('.is-video-frame');
+    if (!document.fullscreenElement) {
+      frame?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  const showControls = () => {
+    setControlsVisible(true);
+    clearTimeout(hideTimerRef.current);
+    hideTimerRef.current = setTimeout(() => {
+      setControlsVisible(false);
+    }, 2800);
+  };
+
+  const scheduleHide = () => {
+    hideTimerRef.current = setTimeout(() => {
+      if (isPlaying) setControlsVisible(false);
+    }, 800);
+  };
+
+  const formatTime = (s) => {
+    if (!s || isNaN(s)) return '0:00';
+    const m   = Math.floor(s / 60);
+    const sec = Math.floor(s % 60).toString().padStart(2, '0');
+    return `${m}:${sec}`;
+  };
+
   // ── DATA ──────────────────────────────────────────────────────────────────
+
   const problems = [
     { num: '01', title: 'Large & Complex',        label: 'Size & Complexity',  desc: 'Industrial products are often too massive or intricate to convey through standard photography or 2D catalogs.' },
     { num: '02', title: 'Expensive to Transport', label: 'Logistics Cost',     desc: 'Moving heavy machinery for exhibitions or client trials incurs massive shipping and insurance costs.' },
@@ -123,47 +231,17 @@ export default function IndustrialSolutionsPage() {
   ];
 
   const xrSolutions = [
-    {
-      num: '01',
-      title: 'Immersive Product Visualization',
-      img: imgHero,
-      desc: 'Experience products in lifelike 3D through interactive XR for better understanding and faster decisions.',
-    },
-    {
-      num: '02',
-      title: 'Interactive Product Exploration',
-      img: imgExecution,
-      desc: 'Explore every layer, component, and detail of complex products with intuitive interactive views.',
-    },
-    {
-      num: '03',
-      title: 'Product Understanding & Simulation',
-      img: imgIntelligent,
-      desc: 'Understand product functionality through realistic simulations and real world use case demonstrations.',
-    },
-    {
-      num: '04',
-      title: 'Immersive Training & Simulation',
-      img: imgBuiltToLast,
-      desc: 'Enable safer, faster, and more effective workforce training through realistic virtual scenarios.',
-    },
-    {
-      num: '05',
-      title: 'Guided Assembly & Maintenance',
-      img: imgOneteam,
-      desc: 'Simplify assembly and servicing with step by step AR guided instructions and workflows.',
-    },
-    {
-      num: '06',
-      title: 'AR Wayfinder for Inventory & Logistics',
-      img: imgSolutionsJewel,
-      desc: 'Navigate spaces and locate products efficiently with smart AR based wayfinding and indoor guidance.',
-    },
+    { num: '01', title: 'Immersive Product Visualization',        img: imgHero,           desc: 'Experience products in lifelike 3D through interactive XR for better understanding and faster decisions.' },
+    { num: '02', title: 'Interactive Product Exploration',        img: imgExecution,      desc: 'Explore every layer, component, and detail of complex products with intuitive interactive views.' },
+    { num: '03', title: 'Product Understanding & Simulation',     img: imgIntelligent,    desc: 'Understand product functionality through realistic simulations and real world use case demonstrations.' },
+    { num: '04', title: 'Immersive Training & Simulation',        img: imgBuiltToLast,    desc: 'Enable safer, faster, and more effective workforce training through realistic virtual scenarios.' },
+    { num: '05', title: 'Guided Assembly & Maintenance',          img: imgOneteam,        desc: 'Simplify assembly and servicing with step by step AR guided instructions and workflows.' },
+    { num: '06', title: 'AR Wayfinder for Inventory & Logistics', img: imgSolutionsJewel, desc: 'Navigate spaces and locate products efficiently with smart AR based wayfinding and indoor guidance.' },
   ];
 
   const steps = [
     {
-      num: '01', label: 'Preparation', title: 'Provide 2D Files',
+      num: '01', label: 'Preparation',   title: 'Provide 2D Files',
       desc: 'Simply share your CAD or product design files with us. We handle the heavy lifting of conversion.',
       points: ['Compatible with major 2D formats', 'Secure data handling', 'Optimization for web performance'],
     },
@@ -173,7 +251,7 @@ export default function IndustrialSolutionsPage() {
       points: ['Photorealistic materials', 'Lightweight loading', 'Cross-device compatibility'],
     },
     {
-      num: '03', label: 'Deployment', title: 'Share Globally',
+      num: '03', label: 'Deployment',    title: 'Share Globally',
       desc: 'Your product becomes a digital link or QR code, accessible via WhatsApp, email, or your website instantly.',
       points: ['No apps required', 'Instant distribution to buyers', 'Embed in digital brochures'],
     },
@@ -190,18 +268,30 @@ export default function IndustrialSolutionsPage() {
     { icon: '⚡', text: 'Accelerated Buyer Decision Cycles' },
   ];
 
+  // ── RENDER ────────────────────────────────────────────────────────────────
+
   return (
     <div className="is-mobile-adaptive-viewport">
-      {/* FIXED NAV */}
-      <nav className={scrolled ? 'nav-scrolled' : ''} style={scrolled ? {
-        background: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
-        boxShadow: '0 2px 16px rgba(5,0,64,0.06)'
-      } : {}}>
+
+      {/* ── FIXED NAV ── */}
+      <nav
+        className={scrolled ? 'nav-scrolled' : ''}
+        style={scrolled ? {
+          background:   '#ffffff',
+          borderBottom: '1px solid #e2e8f0',
+          boxShadow:    '0 2px 16px rgba(5,0,64,0.06)',
+        } : {}}
+      >
         <div id="menu" className={menuOpen ? 'open' : ''}>
+          <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
+        <div className="logo-text-group">
+          <span className="logo-text">PIXRITY</span>
+        </div>
+      </a>
           <a href="/">Home</a>
           <a href="/product" onClick={(e) => { e.preventDefault(); navigate('/product'); }}>Product</a>
-          
+
           <div
             className="dropdown cmd-dropdown"
             onMouseEnter={() => setDropdownOpen(true)}
@@ -214,29 +304,35 @@ export default function IndustrialSolutionsPage() {
 
             {dropdownOpen && (
               <div className="cmd-panel">
-                <a href="/jewellery-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/jewellery-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
+                <a href="/jewellery-solutions" className="cmd-item"
+                  onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/jewellery-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
                   Immersive Jewellery Solutions
                 </a>
                 <a href="/immersive-industrial" className="cmd-item cmd-item-active">
                   Immersive Industrial Solutions
                 </a>
-                <a href="/immersive-advertising" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/immersive-advertising'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
+                <a href="/immersive-advertising" className="cmd-item"
+                  onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/immersive-advertising'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
                   Immersive Advertising Solutions
                 </a>
-                <a href="/ai-solutions" className="cmd-item" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/ai-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
+                <a href="/ai-solutions" className="cmd-item"
+                  onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/ai-solutions'); window.dispatchEvent(new PopStateEvent('popstate')); setMenuOpen(false); setDropdownOpen(false); }}>
                   Agentic AI Solutions
                 </a>
               </div>
             )}
           </div>
+
           <a href="#is-enables" onClick={handleSmoothScroll}>About</a>
-          <a href="#is-how" onClick={handleSmoothScroll}>Insights</a>
+          <a href="#is-how"     onClick={handleSmoothScroll}>Insights</a>
+
           <button className="close-btn" aria-label="Close menu" onClick={() => setMenuOpen(false)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18" /><path d="m6 6 12 12" />
             </svg>
           </button>
         </div>
+
         <div className="nav-right">
           <button className="contact-btn" onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}>
             Contact Us
@@ -249,13 +345,21 @@ export default function IndustrialSolutionsPage() {
         </div>
       </nav>
 
-      {/* LOGO WATERMARK */}
-      <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+      {/* ── LOGO WATERMARK ── */}
+      {/* <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
         <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
         </div>
-      </a>
+      </a>  */}
+
+      {/* ── LOGO WATERMARK ── */}
+<a href="/" className={`logo-watermark logo-watermark--mobile-only${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+  <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
+  <div className="logo-text-group">
+    <span className="logo-text">PIXRITY</span>
+  </div>
+</a>
 
       {/* ══ SCROLL SNAP CONTAINER ══ */}
       <div className="snap-page" ref={snapPageRef}>
@@ -277,6 +381,120 @@ export default function IndustrialSolutionsPage() {
                 Book a Demo
               </button>
               <button className="btn-secondary" onClick={() => scrollTo('#is-problems')}>Explore the Solutions</button>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 01.5 VIDEO SHOWCASE ── */}
+        <section className="snap-section is-video-snap" id="is-video">
+          <div className="section-inner is-video-inner">
+            <span className="section-label">See It In Action</span>
+            <h2 className="section-headline">
+              Industrial XR <span className="headline-accent">In Motion.</span>
+              
+            </h2>
+
+            <div
+              className="is-video-frame"
+              onMouseMove={showControls}
+              onMouseLeave={scheduleHide}
+              onTouchStart={showControls}
+            >
+              {/* Video element */}
+              <video
+                ref={videoRef}
+                className="is-video-el"
+                src="./video/industrialmain.mp4"
+                loop
+                muted={isMuted}
+                playsInline
+                onClick={handleVideoToggle}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleMetadata}
+              />
+
+              {/* Centre play overlay — only when paused */}
+              {!isPlaying && (
+                <div className="is-video-centre-overlay" onClick={handleVideoToggle}>
+                  <div className="is-video-play-btn">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                      <polygon points="5,3 19,12 5,21" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+
+              {/* ── CONTROL BAR ── */}
+              <div className={`is-video-controls ${controlsVisible ? 'visible' : ''}`}>
+
+                {/* Progress bar */}
+                <div className="is-vc-progress-wrap" onClick={handleSeek}>
+                  <div className="is-vc-progress-bg">
+                    <div className="is-vc-progress-fill" style={{ width: `${progress}%` }} />
+                    <div className="is-vc-progress-thumb" style={{ left: `${progress}%` }} />
+                  </div>
+                </div>
+
+                <div className="is-vc-row">
+                  {/* Left: play + timestamp */}
+                  <div className="is-vc-left">
+                    <button className="is-vc-btn" onClick={handleVideoToggle} aria-label="Play/Pause">
+                      {isPlaying ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <rect x="6"  y="4" width="4" height="16" rx="1" />
+                          <rect x="14" y="4" width="4" height="16" rx="1" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="5,3 19,12 5,21" />
+                        </svg>
+                      )}
+                    </button>
+                    <span className="is-vc-time">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  </div>
+
+                  {/* Right: mute + fullscreen */}
+                  <div className="is-vc-right">
+                    <button className="is-vc-btn" onClick={() => setIsMuted((m) => !m)} aria-label="Toggle mute">
+                      {isMuted ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                          <line x1="23" y1="9"  x2="17" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                          <line x1="17" y1="9"  x2="23" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"  stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" />
+                        </svg>
+                      )}
+                    </button>
+
+                    <button className="is-vc-btn" onClick={handleFullscreen} aria-label="Fullscreen">
+                      {isFullscreen ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+                          <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+                          <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+                          <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+                          <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+                          <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+                          <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* ── END CONTROL BAR ── */}
+
             </div>
           </div>
         </section>
@@ -315,7 +533,6 @@ export default function IndustrialSolutionsPage() {
               Turn Industrial Products Into<br />
               <span className="headline-accent">Interactive XR Experiences.</span>
             </h2>
-
             <div className="is-xr-cards-grid">
               {xrSolutions.map((s) => (
                 <div className="is-xr-card" key={s.num}>
@@ -398,9 +615,9 @@ export default function IndustrialSolutionsPage() {
               <button className="contact-btn" onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}>
                 Book a Demo
               </button>
-              <button className="btn-secondary" onClick={() => scrollTo('#is-solutions')}>
+              {/* <button className="btn-secondary" onClick={() => scrollTo('#is-solutions')}>
                 Explore Solutions →
-              </button>
+              </button> */}
             </div>
           </div>
         </section>
@@ -432,7 +649,7 @@ export default function IndustrialSolutionsPage() {
                 <a href="/">About</a>
                 <a href="/">Insights</a>
                 <a href="#is-final-cta" onClick={handleSmoothScroll}>Contact</a>
-                <a href="https://wa.me/917204466161" target="_blank" rel="noopener noreferrer" className="footer-whatsapp-link">
+                <a href="https://wa.me/917204466161" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                   <span className="footer-whatsapp-icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />

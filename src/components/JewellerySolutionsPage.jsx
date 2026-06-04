@@ -280,6 +280,12 @@ export default function JewellerySolutionsPage() {
       {/* NAV */}
       <nav className={scrolled ? 'nav-scrolled' : ''}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
+          <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
+        <div className="logo-text-group">
+          <span className="logo-text">PIXRITY</span>
+        </div>
+      </a>
           <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Home</a>
           <a href="/product" onClick={(e) => { e.preventDefault(); navigate('/product'); }}>Product</a>
           <div
@@ -327,12 +333,13 @@ export default function JewellerySolutionsPage() {
       </nav>
 
       {/* LOGO WATERMARK */}
-      <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+      <a href="/" className={`logo-watermark logo-watermark--mobile-only${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
         <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
         </div>
       </a>
+      
 
       {/* ── 01 HERO ── */}
       <section className="j-hero-section" id="j-home">
@@ -905,7 +912,7 @@ export default function JewellerySolutionsPage() {
               <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>About</a>
               <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>Insights</a>
               <a href="#j-cta" onClick={handleSmoothScroll}>Contact</a>
-              <a href="https://wa.me/917204466161" target="_blank" rel="noopener noreferrer" className="footer-whatsapp-link">
+              <a href="https://wa.me/917204466161" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
                 <span className="footer-whatsapp-icon" aria-hidden="true">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />

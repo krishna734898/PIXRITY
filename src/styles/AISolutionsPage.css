@@ -1499,3 +1499,101 @@ div.section-label,
   width: auto;  /* Maintains aspect ratio */
   object-fit: contain;
 }
+/* ===========================================================================
+   MOBILE LOGO WATERMARK FIXES (AI SOLUTIONS)
+   =========================================================================== */
+
+/* 1. By default on desktop screens, hide the second logo watermark completely */
+.logo-watermark--mobile-only {
+  display: none;
+}
+
+/* 2. When the viewport shrinks to mobile size, display the second logo */
+@media (max-width: 767px) {
+  .logo-watermark--mobile-only {
+    display: flex;
+  }
+}
+
+/* 3. Completely hide the top-left logo structure inside the mobile menu drawer when it opens */
+@media (max-width: 767px) {
+  #menu .logo-watermark {
+    display: none !important;
+  }
+}
+/* FORCE HIDE LOGO INSIDE MOBILE MENU DRAWER */
+@media (max-width: 767px) {
+  #menu a.logo-watermark,
+  #menu .logo-watermark,
+  #menu img.logo-watermark-icon,
+  #menu .logo-text-group {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+/* ===========================================================================
+   EXPLICIT MOBILITY FIX FOR AGENTIC AI SOLUTIONS PAGE
+   =========================================================================== */
+@media (max-width: 767px) {
+  /* Target your specific row containers and force them to stack columns */
+  .ai-hero-cta-row,
+  .ai-sol3-cta-row,
+  .ai-cta-section .cta-container,
+  .cta-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+    height: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  /* Force the nested contact buttons to wake up and display */
+  .ai-hero-cta-row .contact-btn,
+  .ai-hero-cta-row .btn-secondary,
+  .ai-sol3-cta-row .contact-btn,
+  .ai-sol3-cta-row .btn-secondary,
+  .cta-container .contact-btn,
+  .cta-container button {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+}
+/* Remove box/shadow from nav logo - all screen sizes */
+nav .logo-watermark,
+nav .logo-watermark.logo-scrolled,
+nav a.logo-watermark,
+nav a.logo-watermark.logo-scrolled {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 767px) {
+  nav .logo-watermark,
+  nav a.logo-watermark,
+  nav .logo-watermark.logo-scrolled,
+  nav a.logo-watermark.logo-scrolled {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+  }
+}

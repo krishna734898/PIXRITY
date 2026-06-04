@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import '../styles/HomePage.css';
+// import '../styles/HomePage.mobile.css'; // Importing the new mobile stylesheet
 
 /* global Calendly */
 
@@ -12,7 +13,7 @@ import oneteam from '../assets/oneteam.png';
 import builttolast from '../assets/builttolast.png';
 import pixrityLogo from "../assets/PHOTO-2025-12-18-10-27-20.png";
 import logoInverted from "../assets/logo inverted.png";
-//  src={logoInverted}
+
 // ── VIDEO ──────────────────────────────────────────────────────────────────────
 const demoVideo = '/video/AI3Dgenerator.mp4';
 const videoJewellery = '/video/Virtual_tryon.mp4';
@@ -38,7 +39,6 @@ function useScrollReveal() {
     );
 
     observer.observe(el);
-
     return () => observer.disconnect();
   }, []);
 
@@ -64,13 +64,62 @@ function useVideoIntersection() {
     );
 
     observer.observe(el);
-
     return () => observer.disconnect();
   }, []);
 
   return ref;
 }
 
+// ── NEW: Mobile Scroll-Hover Hook Engine ──
+function useMobileScrollHover() {
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    if (!mq.matches) return;
+
+    let observer = null;
+
+    const attach = () => {
+      if (observer) observer.disconnect();
+
+      const cards = document.querySelectorAll(
+        '.home-mobile-adaptive-viewport .pillar-card,' +
+        '.home-mobile-adaptive-viewport .solution-tile,' +
+        '.home-mobile-adaptive-viewport .home-step-card'
+      );
+
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-mobile-scrolled-hover');
+            } else {
+              entry.target.classList.remove('is-mobile-scrolled-hover');
+            }
+          });
+        },
+        {
+          rootMargin: '-25% 0px -25% 0px',
+          threshold: 0.2,
+        }
+      );
+
+      cards.forEach((card) => observer.observe(card));
+    };
+
+    attach();
+
+    const mutObs = new MutationObserver(() => attach());
+    const viewport = document.querySelector('.home-mobile-adaptive-viewport');
+    if (viewport) {
+      mutObs.observe(viewport, { childList: true, subtree: true });
+    }
+
+    return () => {
+      if (observer) observer.disconnect();
+      mutObs.disconnect();
+    };
+  }, []);
+}
 function CardVideo({ src, tintClass }) {
   const videoRef = useVideoIntersection();
 
@@ -157,6 +206,8 @@ export default function HomePage() {
   const [ctaRef, ctaVisible] = useScrollReveal();
   const [cta2Ref, cta2Visible] = useScrollReveal();
 
+  useMobileScrollHover(); // Initializing scroll layout listener
+
   useEffect(() => {
     const calendlyCssId = 'calendly-widget-css';
     const calendlyScriptId = 'calendly-widget-script';
@@ -179,17 +230,17 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-  const handleScroll = () => {
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    setScrolled(scrollY > 10);
-  };
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  document.addEventListener('scroll', handleScroll, { passive: true });
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    document.removeEventListener('scroll', handleScroll);
-  };
-}, []);
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setScrolled(scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -351,9 +402,25 @@ export default function HomePage() {
   ];
 
   return (
-    <>
+    <div className="home-mobile-adaptive-viewport">
       <nav className={scrolled ? 'nav-scrolled' : ''}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
+          
+      <a
+        href="#home"
+        className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`}
+        aria-label="Pixrity home"
+        onClick={handleSmoothScroll}
+      >
+        <img
+          src={pixrityLogo}
+          alt="Pixrity Logo"
+          className="logo-watermark-icon"
+        />
+        <div className="logo-text-group">
+          <span className="logo-text">PIXRITY</span>
+        </div>
+      </a>
           <a
             href="/product"
             onClick={(e) => {
@@ -370,6 +437,9 @@ export default function HomePage() {
             onMouseLeave={() => setDropdownOpen(false)}
           >
             <span>Solutions</span>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="m4.5 7.2 3.793 3.793a1 1 0 0 0 1.414 0L13.5 7.2" stroke="#050040" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
 
             {dropdownOpen && (
               <div className="cmd-panel">
@@ -463,7 +533,7 @@ export default function HomePage() {
           </button>
         </div>
       </nav>
-
+{/* 
       <a
         href="#home"
         className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`}
@@ -471,10 +541,17 @@ export default function HomePage() {
         onClick={handleSmoothScroll}
       >
         <img
-    src={pixrityLogo}
-    alt="Pixrity Logo"
-    className="logo-watermark-icon"
-  />
+          src={pixrityLogo}
+          alt="Pixrity Logo"
+          className="logo-watermark-icon"
+        />
+        <div className="logo-text-group">
+          <span className="logo-text">PIXRITY</span>
+        </div>
+      </a> */}
+      {/* ── LOGO WATERMARK ── */}
+<a href="/" className={`logo-watermark logo-watermark--mobile-only${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
         </div>
@@ -745,106 +822,105 @@ export default function HomePage() {
       </section>
 
       <footer className="footer">
-  <div className="footer-inner">
-    <div className="footer-brand">
-      {/* Container for Logo + Brand Name */}
-      <div className="footer-logo-container">
-        <img 
-          src={logoInverted}
-          alt="PIXRITY Logo" 
-          className="footer-logo-img" 
-        />
-        <span className="footer-logo">PIXRITY</span>
-      </div>
-      <span className="footer-tagline">Transforming Experience</span>
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <div className="footer-logo-container">
+              <img 
+                src={logoInverted}
+                alt="PIXRITY Logo" 
+                className="footer-logo-img" 
+              />
+              <span className="footer-logo">PIXRITY</span>
+            </div>
+            <span className="footer-tagline">Transforming Experience</span>
+          </div>
+
+          <div className="footer-links">
+            <div className="footer-col">
+              <span className="footer-col-label">Solutions</span>
+
+              <a
+                href="/jewellery-solutions"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/jewellery-solutions');
+                }}
+              >
+                Immersive Jewellery
+              </a>
+
+              <a
+                href="/immersive-industrial"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/immersive-industrial');
+                }}
+              >
+                Immersive Industrial
+              </a>
+
+              <a
+                href="/immersive-advertising"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/immersive-advertising');
+                }}
+              >
+                Immersive Advertising
+              </a>
+
+              <a
+                href="/ai-solutions"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate('/ai-solutions');
+                }}
+              >
+                Agentic AI
+              </a>
+            </div>
+
+            <div className="footer-col">
+              <span className="footer-col-label">Product</span>
+              <a href="#">
+                AI 3D Generator <span className="footer-badge">✦ Soon</span>
+              </a>
+            </div>
+
+            <div className="footer-col">
+              <span className="footer-col-label">Company</span>
+              <a href="#how" onClick={handleSmoothScroll}>
+                About
+              </a>
+              <a href="#why" onClick={handleSmoothScroll}>
+                Insights
+              </a>
+              <a href="#final-cta" onClick={handleSmoothScroll}>
+                Contact
+              </a>
+
+              <a
+                href="https://wa.me/917204466161"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              >
+                <span className="footer-whatsapp-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />
+                  </svg>
+                </span>
+                Chat with us
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <span>info@pixrity.com · +91 7204466161 · pixrity.com</span>
+          <span>© 2026 PIXRITY Private Limited. All rights reserved.</span>
+        </div>
+      </footer>
     </div>
-
-    <div className="footer-links">
-      <div className="footer-col">
-        <span className="footer-col-label">Solutions</span>
-
-        <a
-          href="/jewellery-solutions"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/jewellery-solutions');
-          }}
-        >
-          Immersive Jewellery
-        </a>
-
-        <a
-          href="/immersive-industrial"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/immersive-industrial');
-          }}
-        >
-          Immersive Industrial
-        </a>
-
-        <a
-          href="/immersive-advertising"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/immersive-advertising');
-          }}
-        >
-          Immersive Advertising
-        </a>
-
-        <a
-          href="/ai-solutions"
-          onClick={(e) => {
-            e.preventDefault();
-            navigate('/ai-solutions');
-          }}
-        >
-          Agentic AI
-        </a>
-      </div>
-
-      <div className="footer-col">
-        <span className="footer-col-label">Product</span>
-        <a href="#">
-          AI 3D Generator <span className="footer-badge">✦ Soon</span>
-        </a>
-      </div>
-
-      <div className="footer-col">
-        <span className="footer-col-label">Company</span>
-        <a href="#how" onClick={handleSmoothScroll}>
-          About
-        </a>
-        <a href="#why" onClick={handleSmoothScroll}>
-          Insights
-        </a>
-        <a href="#final-cta" onClick={handleSmoothScroll}>
-          Contact
-        </a>
-
-        <a
-          href="https://wa.me/917204466161"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="footer-whatsapp-link"
-        >
-          <span className="footer-whatsapp-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.52 3.48A11.84 11.84 0 0 0 12.08 0C5.47 0 .08 5.39.08 12c0 2.11.55 4.17 1.6 5.99L0 24l6.17-1.62A11.94 11.94 0 0 0 12.08 24C18.69 24 24 18.61 24 12c0-3.2-1.24-6.21-3.48-8.52ZM12.08 21.97c-1.79 0-3.54-.48-5.07-1.39l-.36-.21-3.66.96.98-3.57-.23-.37A9.9 9.9 0 0 1 2.1 12c0-5.5 4.48-9.97 9.98-9.97 2.66 0 5.16 1.04 7.04 2.92A9.88 9.88 0 0 1 21.97 12c0 5.5-4.39 9.97-9.89 9.97Zm5.47-7.46c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.77-1.67-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.69.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z" />
-            </svg>
-          </span>
-          Chat with us
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div className="footer-bottom">
-    <span>info@pixrity.com · +91 7204466161 · pixrity.com</span>
-    <span>© 2026 PIXRITY Private Limited. All rights reserved.</span>
-  </div>
-</footer>
-    </>
   );
 }

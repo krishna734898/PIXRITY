@@ -159,8 +159,8 @@ nav.nav-scrolled .dropdown > span {
   gap: 10px;
   text-decoration: none;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 10px;
+  /* border: 1px solid transparent;
+  border-radius: 10px; */
   padding: 7px 14px 7px 8px;
   transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   height: calc(var(--nav-height) - 20px);
@@ -1459,4 +1459,47 @@ nav.nav-scrolled {
   -webkit-backdrop-filter: none !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
+}
+
+/* 1. By default (on desktop), hide the mobile-only logo completely */
+.logo-watermark--mobile-only {
+  display: none;
+}
+
+/* 2. When the screen shrinks to mobile size, show it */
+@media (max-width: 767px) {
+  .logo-watermark--mobile-only {
+    display: flex;
+  }
+}
+@media (max-width: 767px) {
+  .home-mobile-adaptive-viewport #menu .logo-watermark {
+    display: none !important;
+  }
+}
+/* Remove box/shadow from nav logo - all screen sizes */
+nav .logo-watermark,
+nav .logo-watermark.logo-scrolled,
+nav a.logo-watermark,
+nav a.logo-watermark.logo-scrolled {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+@media (max-width: 767px) {
+  nav .logo-watermark,
+  nav a.logo-watermark,
+  nav .logo-watermark.logo-scrolled,
+  nav a.logo-watermark.logo-scrolled {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+  }
 }

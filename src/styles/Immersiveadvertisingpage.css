@@ -57,7 +57,8 @@
 .ia-process-section,
 .ia-trust-section,
 .ia-close-section,
-.ia-cta-section {
+.ia-cta-section,
+.ia-demo-section {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
@@ -1629,4 +1630,283 @@
   height: 32px; /* Set this to fit your footer design */
   width: auto;  /* Maintains aspect ratio */
   object-fit: contain;
+}
+
+.ia-ask-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ia-ask-email {
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: var(--brand);
+  background: #ffffff;
+  border: 1px solid rgba(124, 58, 237, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ia-ask-email::placeholder {
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.ia-ask-email:focus {
+  border-color: rgba(124, 58, 237, 0.45);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.07);
+}
+/* ===========================================================================
+   IA DEMO VIDEO SECTION
+   Add this block to ImmersiveAdvertisingPage.css
+   =========================================================================== */
+
+/* ── DEMO SECTION — 50/50 LAYOUT ── */
+.ia-demo-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+  min-height: 100vh;
+}
+
+.ia-demo-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1280px;
+}
+
+/* ── TWO COLUMN ROW ── */
+.ia-demo-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  width: 100%;
+}
+
+/* ── LEFT: TEXT COLUMN ── */
+.ia-demo-text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.ia-demo-text-col .section-label {
+  margin-bottom: 20px;
+}
+
+.ia-demo-text-col .section-headline {
+  text-align: left !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── RIGHT: VIDEO COLUMN ── */
+.ia-demo-video-col {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ── FRAME WRAPPER ── */
+.ia-demo-frame-wrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* ── PHONE SHELL ── */
+.ia-demo-phone-shell {
+  width: clamp(220px, 28vw, 300px);
+  background: #1c1c1e;
+  border-radius: 42px;
+  padding: 10px 7px 12px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 0 0 3px #111112,
+    0 0 0 4px rgba(255, 255, 255, 0.04),
+    0 28px 64px rgba(0, 0, 0, 0.30),
+    0 8px 20px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── NOTCH ── */
+.ia-demo-notch {
+  width: 60px;
+  height: 7px;
+  background: #111;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* ── SCREEN — 9:19.5 portrait ── */
+.ia-demo-screen {
+  width: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 9 / 19.5;
+  position: relative;
+  cursor: pointer;
+}
+
+.ia-demo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  background: #000;
+}
+
+.ia-demo-chin {
+  width: 48px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* ── GLOW ── */
+.ia-demo-glow {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 140px;
+  background: rgba(124, 58, 237, 0.07);
+  border-radius: 50%;
+  filter: blur(48px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── FULLSCREEN BUTTON ── */
+.ia-demo-fullscreen-btn {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  padding: 6px 14px 6px 10px;
+  color: #ffffff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+  pointer-events: none;
+}
+
+.ia-demo-screen:hover .ia-demo-fullscreen-btn {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.ia-demo-fullscreen-btn:hover {
+  background: rgba(124, 58, 237, 0.75) !important;
+  border-color: rgba(124, 58, 237, 0.5) !important;
+}
+
+/* ── HOVER OVERLAY ── */
+.ia-demo-hover-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.25s ease;
+  pointer-events: none;
+  border-radius: 32px;
+}
+
+.ia-demo-screen:hover .ia-demo-hover-overlay {
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.ia-demo-play-hint {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.ia-demo-screen:hover .ia-demo-play-hint {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── MOBILE ── */
+@media (max-width: 767px) {
+  .ia-demo-section {
+    padding: 64px 20px !important;
+    scroll-snap-align: none !important;
+    scroll-snap-stop: unset !important;
+    min-height: unset !important;
+  }
+
+  .ia-demo-two-col {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  .ia-demo-text-col .section-headline {
+    text-align: center !important;
+  }
+
+  .ia-demo-text-col {
+    align-items: center !important;
+  }
+
+  .ia-demo-phone-shell {
+    width: min(260px, 75vw);
+  }
+}
+/* Outside logo: completely hidden on desktop viewports */
+.logo-watermark--mobile-only {
+  display: none;
+}
+
+/* Wakes up and switches on when screen scales down to mobile layout sizes */
+@media (max-width: 767px) {
+  .logo-watermark--mobile-only {
+    display: flex;
+  }
 }

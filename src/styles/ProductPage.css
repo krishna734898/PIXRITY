@@ -463,3 +463,29 @@
   .pp-form { flex-direction: column; border-radius: 16px; padding: 12px 16px; gap: 10px; }
   .pp-submit-btn { width: 100%; text-align: center; }
 }
+/* Outside logo: completely hidden on desktop viewports */
+.logo-watermark--mobile-only {
+  display: none;
+}
+
+/* Wakes up and switches on when the layout scales down to mobile screen sizes */
+@media (max-width: 767px) {
+  .logo-watermark--mobile-only {
+    display: flex;
+  }
+}
+
+/* Completely clear out the duplicate logo nested inside #menu when mobile navigation expands */
+@media (max-width: 767px) {
+  #menu .logo-watermark,
+  #menu a.logo-watermark,
+  #menu img.logo-watermark-icon,
+  #menu .logo-text-group {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

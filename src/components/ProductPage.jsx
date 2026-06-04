@@ -154,6 +154,13 @@ export default function ProductPage() {
       {/* ── FULL HOMEPAGE NAV ── */}
       <nav className={scrolled ? 'nav-scrolled' : ''}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
+           <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+        <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
+        <div className="logo-text-group">
+          <span className="logo-text">PIXRITY</span>
+          {/* <span className="logo-tagline">Transforming Experience</span> */}
+        </div>
+      </a>
 
           <a href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
             Home
@@ -215,11 +222,14 @@ export default function ProductPage() {
       </nav>
 
       {/* LOGO WATERMARK */}
-      <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+     <a 
+        href="/" 
+        className={`logo-watermark logo-watermark--mobile-only${scrolled ? ' logo-scrolled' : ''}`} 
+        aria-label="Pixrity home"
+      >
         <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
-          {/* <span className="logo-tagline">Transforming Experience</span> */}
         </div>
       </a>
 

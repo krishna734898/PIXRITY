@@ -551,8 +551,8 @@
 .j-problem-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: 48px;
+  gap: 50px;
+  margin-top: 35px;
 }
 
 .j-problem-card {
@@ -1997,4 +1997,33 @@ nav.nav-over-dark #menu .dropdown svg path {
   height: 32px; /* Set this to fit your footer design */
   width: auto;  /* Maintains aspect ratio */
   object-fit: contain;
+}
+/* ============================================================
+   FORCE HERO & VIDEO SECTION DEMO BUTTONS TO DISPLAY ON MOBILE
+   ============================================================ */
+@media (max-width: 767px) {
+  /* Restore visibility to the contact buttons specifically inside your page content rows */
+  .j-hero-cta-row .contact-btn,
+  .j-video-cta-row .contact-btn,
+  .j-sol3-cta-row .contact-btn,
+  .j-cta-left .contact-btn {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+
+  /* Ensure the row containers align them neatly stacked */
+  .j-hero-cta-row,
+  .j-video-cta-row,
+  .j-sol3-cta-row {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
 }

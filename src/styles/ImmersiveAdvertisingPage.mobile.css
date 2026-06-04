@@ -20,21 +20,22 @@
 /* ── SCROLL SNAP REMOVAL FOR MOBILE ── */
 @media (max-width: 767px) {
   .ia-hero-section,
-  .ia-problem-section,
-  .ia-solution-section,
-  .ia-service1-section,
-  .ia-service2-section,
-  .ia-comparison-section,
-  .ia-process-section,
-  .ia-trust-section,
-  .ia-close-section,
-  .ia-cta-section,
-  .ia-faq-section {
-    scroll-snap-align: none !important;
-    scroll-snap-stop: unset !important;
-    min-height: unset !important;
-    padding: 64px 20px !important; /* Compact comfortable mobile padding */
-  }
+.ia-problem-section,
+.ia-solution-section,
+.ia-service1-section,
+.ia-service2-section,
+.ia-comparison-section,
+.ia-process-section,
+.ia-trust-section,
+.ia-close-section,
+.ia-cta-section,
+.ia-demo-section,
+.ia-faq-section {
+  scroll-snap-align: none !important;
+  scroll-snap-stop: unset !important;
+  min-height: unset !important;
+  padding: 64px 20px !important;
+}
 }
 
 /* ── RESPONSIVE GRID & SHOW/HIDE TOGGLES (Tablets & Mobile Viewports) ── */
@@ -226,5 +227,69 @@
     justify-content: center !important;
     width: 100% !important;
     margin-top: 16px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ia-cta-section .cta-container {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  .ia-cta-section .cta-container .contact-btn,
+  .ia-cta-section .cta-container .btn-secondary {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+}
+/* Completely wipe out the duplicate logo nested in #menu when mobile navigation expands */
+@media (max-width: 767px) {
+  #menu .logo-watermark,
+  #menu a.logo-watermark,
+  #menu img.logo-watermark-icon,
+  #menu .logo-text-group {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+/* ===========================================================================
+   FIX: RESTORE BUTTON VISIBILITY FOR THE CALL-TO-ACTION ROW
+   =========================================================================== */
+@media (max-width: 767px) {
+  /* Ensure the button row wrapper resets to a stacked block layout */
+  .ia-demo-section .cta-container,
+  .ia-close-section .cta-container,
+  .cta-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    width: 100% !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+  }
+
+  /* Force both action buttons to show up clearly */
+  .cta-container .contact-btn,
+  .cta-container .btn-secondary,
+  .cta-container button {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
   }
 }

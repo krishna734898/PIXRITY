@@ -22,18 +22,47 @@ function useScrollReveal() {
 
 function AskQuestion() {
   const [query, setQuery] = useState('');
+  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleSubmit = () => {
-    if (!query.trim()) return;
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!query.trim() || !email.trim()) return;
+
+    setLoading(true);
+    setError(false);
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+          subject: 'New Question — Pixrity Immersive Advertising Page',
+          name: 'Website Visitor',
+          email: email,
+          message: `New question received from the Immersive Advertising page.\n\nVisitor Email: ${email}\n\nQuestion:\n${query}`,
+        }),
+      });
+
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit(); }
   };
 
-  const reset = () => { setQuery(''); setSubmitted(false); };
+  const reset = () => { setQuery(''); setEmail(''); setSubmitted(false); setError(false); };
 
   const suggestions = [
     'How long does it take to go live?',
@@ -61,42 +90,61 @@ function AskQuestion() {
             ))}
           </div>
 
-          <div className="ia-ask-input-row">
-            <textarea
-              className="ia-ask-textarea"
-              placeholder="e.g. Can this work for a furniture brand?"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={2}
+          <div className="ia-ask-fields">
+            <input
+              type="email"
+              className="ia-ask-email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
-            <button
-              className="ia-ask-send-btn"
-              onClick={handleSubmit}
-              disabled={!query.trim()}
-              aria-label="Send question"
-            >
-              Send
-            </button>
+            <div className="ia-ask-input-row">
+              <textarea
+                className="ia-ask-textarea"
+                placeholder="e.g. Can this work for a furniture brand?"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                rows={2}
+              />
+              <button
+                className="ia-ask-send-btn"
+                onClick={handleSubmit}
+                disabled={!query.trim() || !email.trim() || loading}
+                aria-label="Send question"
+              >
+                {loading ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
+
+          {error && (
+            <p style={{ color: '#e11d48', fontSize: '12px', marginTop: '8px' }}>
+              Something went wrong. Please try again.
+            </p>
+          )}
         </>
       ) : (
         <div className="ia-ask-confirmation">
           <div className="ia-ask-confirm-icon">✓</div>
           <h4 className="ia-ask-confirm-title">We've received your question.</h4>
           <p className="ia-ask-confirm-body">
-            You'll receive your answer soon — our team typically responds within a few hours.
-            Prefer a faster answer?{' '}
+            We'll reply to <strong>{email}</strong> — our team typically responds within a few hours.
+            Prefer to talk with us?{' '}
             <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
-            Book a Demo
-                </button>
+              className="contact-btn"
+              onClick={() => Calendly.initPopupWidget({ url: 'https://calendly.com/pixrity-info/new-meeting' })}
+            >
+              Book a Demo
+            </button>
           </p>
           <button className="ia-ask-reset" onClick={reset}>Ask another question</button>
         </div>
@@ -111,23 +159,47 @@ export default function ImmersiveAdvertisingPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [closeLearnMoreOpen, setCloseLearnMoreOpen] = useState(false);
   const [learnMoreOpen, setLearnMoreOpen] = useState(false);
-  
+
   // Toggles for deep dive content inside services
   const [service1Open, setService1Open] = useState(false);
   const [service2Open, setService2Open] = useState(false);
 
+  // ── DEMO VIDEO REF (scroll-pause + fullscreen) ──
+  const demoVideoRef = useRef(null);
+  const [demoRef, demoVisible] = useScrollReveal();
+
   useEffect(() => {
-  const handleScroll = () => {
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    setScrolled(scrollY > 10);
-  };
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  document.addEventListener('scroll', handleScroll, { passive: true });
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-    document.removeEventListener('scroll', handleScroll);
-  };
-}, []);
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setScrolled(scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  // ── SCROLL-PAUSE: play when 40% visible, pause when scrolled away ──
+  useEffect(() => {
+    const video = demoVideoRef.current;
+    if (!video) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.4) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -174,6 +246,15 @@ export default function ImmersiveAdvertisingPage() {
 
   const [openFaq, setOpenFaq] = useState(null);
 
+  // ── FULLSCREEN HANDLER ──
+  const handleDemoFullscreen = () => {
+    const vid = demoVideoRef.current;
+    if (!vid) return;
+    if (vid.requestFullscreen) vid.requestFullscreen();
+    else if (vid.webkitRequestFullscreen) vid.webkitRequestFullscreen();
+    else if (vid.mozRequestFullScreen) vid.mozRequestFullScreen();
+  };
+
   const faqs = [
     {
       q: 'Do customers need to download an app?',
@@ -219,6 +300,12 @@ export default function ImmersiveAdvertisingPage() {
     <>
       <nav className={scrolled ? 'nav-scrolled' : ''}>
         <div id="menu" className={menuOpen ? 'open' : ''}>
+          <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+            <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
+            <div className="logo-text-group">
+              <span className="logo-text">PIXRITY</span>
+            </div>
+          </a>
           <a href="/">Home</a>
           <a href="/">Product</a>
 
@@ -260,10 +347,7 @@ export default function ImmersiveAdvertisingPage() {
         </div>
 
         <div className="nav-right">
-          <button
-            className="contact-btn"
-            onClick={() => scrollTo('#ia-final-cta')}
-          >
+          <button className="contact-btn" onClick={() => scrollTo('#ia-final-cta')}>
             Contact Us
           </button>
           <button className="menu-toggle" id="open-menu" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
@@ -273,12 +357,10 @@ export default function ImmersiveAdvertisingPage() {
           </button>
         </div>
       </nav>
-
-      <a href="/" className={`logo-watermark${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
+      <a href="/" className={`logo-watermark logo-watermark--mobile-only${scrolled ? ' logo-scrolled' : ''}`} aria-label="Pixrity home">
         <img src={pixrityLogo} alt="Pixrity Logo" className="logo-watermark-icon" />
         <div className="logo-text-group">
           <span className="logo-text">PIXRITY</span>
-          {/* <span className="logo-tagline">Transforming Experience</span> */}
         </div>
       </a>
 
@@ -296,18 +378,78 @@ export default function ImmersiveAdvertisingPage() {
           </p>
           <div className="cta-container">
             <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
-            Book a Demo
-                </button>
+              className="contact-btn"
+              onClick={() =>
+                Calendly.initPopupWidget({
+                  url: 'https://calendly.com/pixrity-info/new-meeting'
+                })
+              }
+            >
+              Book a Demo
+            </button>
             <button className="btn-secondary" onClick={() => scrollTo('#ia-solution')}>How Does This Work?</button>
           </div>
         </div>
+      </section>
+
+      {/* ── DEMO VIDEO SECTION ── */}
+      <section className="ia-section ia-demo-section" id="ia-demo">
+        <div className={`section-inner ia-demo-inner ${demoVisible ? 'reveal' : ''}`} ref={demoRef}>
+  <div className="ia-demo-two-col">
+
+    {/* LEFT: TEXT */}
+    <div className="ia-demo-text-col">
+      <span className="section-label">See It Live</span>
+      <h2 className="section-headline">
+        <span className="ia-heading-line">This is what your customer</span><br />
+        <span className="headline-accent ia-heading-line">actually experiences.</span>
+      </h2>
+    </div>
+
+    {/* RIGHT: VIDEO */}
+    <div className="ia-demo-video-col">
+      <div className="ia-demo-frame-wrap">
+        <div className="ia-demo-phone-shell">
+          <div className="ia-demo-notch" />
+          <div className="ia-demo-screen">
+            <video
+              ref={demoVideoRef}
+              src="/video/advertisingsection2video.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="ia-demo-video"
+            />
+            <button
+              className="ia-demo-fullscreen-btn"
+              aria-label="View fullscreen"
+              onClick={handleDemoFullscreen}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3"/>
+                <path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+                <path d="M3 16v3a2 2 0 0 0 2 2h3"/>
+                <path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+              </svg>
+              <span>Fullscreen</span>
+            </button>
+            <div className="ia-demo-hover-overlay">
+              <div className="ia-demo-play-hint">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="ia-demo-chin" />
+        </div>
+        <div className="ia-demo-glow" />
+      </div>
+    </div>
+
+  </div>
+</div>
       </section>
 
       {/* ── 02 THE PROBLEM ── */}
@@ -344,7 +486,8 @@ export default function ImmersiveAdvertisingPage() {
             <span className="ia-heading-line">not just something to see?</span>
           </h2>
           <div className="section-intro">
-            <p>Immersive advertising is not a better version of what you are already running. It is a different category entirely.</p><button
+            <p>Immersive advertising is not a better version of what you are already running. It is a different category entirely.</p>
+            <button
               type="button"
               className="ia-learn-more-btn ia-solution-learn-more"
               onClick={() => setLearnMoreOpen(v => !v)}
@@ -352,7 +495,7 @@ export default function ImmersiveAdvertisingPage() {
             >
               {learnMoreOpen ? 'Show less' : 'Learn more'}
             </button>
-            
+
             <div className={`ia-learn-more-content ${learnMoreOpen ? 'open' : ''}`}>
               <p>Instead of showing your customer what your product looks like, you let them experience it inside the Ad itself. They interact with it. They try it. They rotate it, explore it, personalise it. They spend two to three minutes with your product before they have clicked anything. They arrive at your store or website having already decided.</p>
               <p className="ia-solution-highlight">No app to download. No special device required. Works in any browser, on any smartphone your customer already owns.</p>
@@ -361,17 +504,17 @@ export default function ImmersiveAdvertisingPage() {
           <div className="ia-services-intro">
             <p className="ia-services-intro-label">We do this through two types of campaigns:</p>
             <div className="ia-service-cards-grid">
-              
+
               {/* Solution 01 Video Card */}
               <div className="ia-service-preview-card" onClick={() => scrollTo('#ia-service1')}>
                 <div className="ia-service-card-img-wrap">
-                  <video 
-                    src="/video/jewelcard1.mp4" 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    className="ia-service-card-video" 
+                  <video
+                    src="/video/jewelcard1.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="ia-service-card-video"
                   />
                 </div>
                 <div className="ia-service-card-body">
@@ -385,13 +528,13 @@ export default function ImmersiveAdvertisingPage() {
               {/* Solution 02 Video Card */}
               <div className="ia-service-preview-card" onClick={() => scrollTo('#ia-service2')}>
                 <div className="ia-service-card-img-wrap">
-                  <video 
-                    src="/video/jewelcardup2.mp4" 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    className="ia-service-card-video" 
+                  <video
+                    src="/video/jewelcardup2.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="ia-service-card-video"
                   />
                 </div>
                 <div className="ia-service-card-body">
@@ -410,7 +553,7 @@ export default function ImmersiveAdvertisingPage() {
       {/* ── 04 SERVICE 01 — SOCIAL ── */}
       <section className="ia-section ia-service1-section" id="ia-service1" ref={service1Ref}>
         <div className={`section-inner ia-service-two-col ${service1Visible ? 'reveal' : ''}`}>
-          
+
           {/* LEFT COLUMN: TEXT & INFORMATION */}
           <div className="ia-service-left">
             <span className="section-label">Solution 01</span>
@@ -419,7 +562,7 @@ export default function ImmersiveAdvertisingPage() {
               <span className="headline-accent ia-heading-line">Media Ads</span>
             </h2>
             <p className="ia-service-subhead">Your social Ad should be something your customer plays with, not scrolls past.</p>
-            
+
             <div className="ia-explainer-box">
               <p className="ia-explainer-lead">You know how Instagram and Snapchat let you put filters on your face using the camera?</p>
               <p>That same technology applied to your product.</p>
@@ -476,13 +619,13 @@ export default function ImmersiveAdvertisingPage() {
               </div>
             </div>
 
-            {/* BUTTON 1: DESKTOP ONLY VIEWPORT (Hidden automatically on mobile/tabs via CSS) */}
+            {/* BUTTON 1: DESKTOP ONLY */}
             <div className="ia-service-cta ia-desktop-cta">
               <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Social Ad Demo for Your Product</button>
             </div>
           </div>
 
-          {/* RIGHT COLUMN: PHONE MOCKUP HOUSING THE VIDEO */}
+          {/* RIGHT COLUMN: PHONE MOCKUP */}
           <div className="ia-service-right">
             <div className="ia-phone-wrap">
               <div className="ia-phone-shell">
@@ -496,7 +639,7 @@ export default function ImmersiveAdvertisingPage() {
             </div>
           </div>
 
-          {/* BUTTON 2: MOBILE/TABLET VIEWPORT ONLY (Sits at the absolute end, below the phone video) */}
+          {/* BUTTON 2: MOBILE/TABLET ONLY */}
           <div className="ia-service-cta ia-mobile-cta">
             <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Social Ad Demo for Your Product</button>
           </div>
@@ -504,10 +647,10 @@ export default function ImmersiveAdvertisingPage() {
         </div>
       </section>
 
-     {/* ── 05 SERVICE 02 — PRINT ── */}
+      {/* ── 05 SERVICE 02 — PRINT ── */}
       <section className="ia-section ia-service2-section" id="ia-service2" ref={service2Ref}>
         <div className={`section-inner ia-service2-three-col ${service2Visible ? 'reveal' : ''}`}>
-          
+
           {/* LEFT COLUMN: LAPTOP ACCENT SCREEN */}
           <div className="ia-service2-video-left">
             <div className="ia-screen-wrap">
@@ -588,7 +731,7 @@ export default function ImmersiveAdvertisingPage() {
               </div>
             </div>
 
-            {/* BUTTON 1: DESKTOP ONLY (Disappears on mobile/tablet view via CSS) */}
+            {/* BUTTON 1: DESKTOP ONLY */}
             <div className="ia-service-cta ia-desktop-cta">
               <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Print Ad Demo</button>
             </div>
@@ -608,13 +751,14 @@ export default function ImmersiveAdvertisingPage() {
             </div>
           </div>
 
-          {/* BUTTON 2: MOBILE/TABLET ONLY (Sits perfectly at the end of the stacked section) */}
+          {/* BUTTON 2: MOBILE/TABLET ONLY */}
           <div className="ia-service-cta ia-mobile-cta">
             <button className="btn-primary" onClick={() => scrollTo('#ia-final-cta')}>See a Print Ad Demo</button>
           </div>
 
         </div>
       </section>
+
       {/* ── 06 COMPARISON ── */}
       <section className="ia-comparison-section" id="ia-comparison" ref={comparisonRef}>
         <div className={`ia-comparison-inner ${comparisonVisible ? 'reveal' : ''}`}>
@@ -717,15 +861,15 @@ export default function ImmersiveAdvertisingPage() {
           </p>
           <div className="cta-container" style={{ marginTop: '40px' }}>
             <button
-                  className="contact-btn"
-                  onClick={() =>
-                    Calendly.initPopupWidget({
-                      url: 'https://calendly.com/pixrity-info/new-meeting'
-                    })
-                  }
-                >
-            Book a Demo
-                </button>
+              className="contact-btn"
+              onClick={() =>
+                Calendly.initPopupWidget({
+                  url: 'https://calendly.com/pixrity-info/new-meeting'
+                })
+              }
+            >
+              Book a Demo
+            </button>
             <button className="btn-secondary ia-whatsapp-btn" onClick={() => window.open('https://api.whatsapp.com/send/?phone=917204466161&text=Hello+Pixrity%2C+I+want+to+explore+your+solutions+across+immersive+AI+experiences&type=phone_number&app_absent=0', '_blank')}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -765,16 +909,16 @@ export default function ImmersiveAdvertisingPage() {
         <div className="footer-inner">
           <div className="footer-brand">
             <div className="footer-logo-container">
-        <img 
-           src={logoInverted}
-          alt="PIXRITY Logo" 
-          className="footer-logo-img" 
-        />
-        <span className="footer-logo">PIXRITY</span>
-      </div>
-      <span className="footer-tagline">Transforming Experience</span>
-    </div>
-    <div className="footer-links">
+              <img
+                src={logoInverted}
+                alt="PIXRITY Logo"
+                className="footer-logo-img"
+              />
+              <span className="footer-logo">PIXRITY</span>
+            </div>
+            <span className="footer-tagline">Transforming Experience</span>
+          </div>
+          <div className="footer-links">
             <div className="footer-col">
               <span className="footer-col-label">Solutions</span>
               <a href="/">Immersive Jewellery</a>
@@ -795,7 +939,7 @@ export default function ImmersiveAdvertisingPage() {
                 href="https://wa.me/917204466161"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="footer-whatsapp-link"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
               >
                 <span className="footer-whatsapp-icon" aria-hidden="true">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

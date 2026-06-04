@@ -32,7 +32,7 @@
   }
 }
 
-/* ── GRID COLLAPSING & SCROLL-HOVER SYSTEMS ── */
+/* ── GRID COLLAPSING ── */
 @media (max-width: 1024px) {
   .is-mobile-adaptive-viewport .is-problems-grid,
   .is-mobile-adaptive-viewport .is-xr-cards-grid {
@@ -59,17 +59,25 @@
   }
 
   /* ── 1. COLLAPSE INTERNAL ELEMENTS BY DEFAULT ── */
-  .is-mobile-adaptive-viewport .is-problem-desc,
+
+  .is-mobile-adaptive-viewport .is-problem-desc {
+    opacity: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    margin-top: 0 !important;
+    transition: opacity 0.35s ease, max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+
   .is-mobile-adaptive-viewport .is-step-desc,
   .is-mobile-adaptive-viewport .is-step-points {
     opacity: 0 !important;
     max-height: 0 !important;
     overflow: hidden !important;
     margin-top: 0 !important;
-    transition: opacity 0.3s ease, max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: opacity 0.35s ease, max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
   }
 
-  .is-mobile-adaptive-viewport .is-xr-card-overlay {
+  /* .is-mobile-adaptive-viewport .is-xr-card-overlay {
     opacity: 0 !important;
     transform: translateY(100%) !important;
     transition: opacity 0.35s ease, transform 0.35s ease !important;
@@ -79,25 +87,26 @@
       rgba(5, 0, 64, 0.75) 70%,
       rgba(5, 0, 64, 0.4) 100%
     ) !important;
-  }
+  } */
 
-  /* ── 2. SCROLL TRIGGERED ACTIVE HOVER STATES ── */
-  
-  /* Problem Cards - Scroll Open */
+  /* ── 2. SCROLL TRIGGERED HOVER STATES ── */
+
+  /* Problem Cards */
   .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover {
     box-shadow: 0 12px 40px rgba(5, 0, 64, 0.1) !important;
     border-color: var(--card-stripe, var(--accent)) !important;
+    transform: translateY(-2px) !important;
   }
   .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover::before {
     transform: scaleX(1) !important;
   }
   .is-mobile-adaptive-viewport .is-problem-card.is-mobile-hover .is-problem-desc {
     opacity: 1 !important;
-    max-height: 140px !important;
+    max-height: 160px !important;
     margin-top: 8px !important;
   }
 
-  /* XR Product Overlays - Scroll Open */
+  /* XR Cards */
   .is-mobile-adaptive-viewport .is-xr-card.is-mobile-hover {
     box-shadow: 0 20px 56px rgba(5, 0, 64, 0.13) !important;
     border-color: rgba(59, 59, 255, 0.25) !important;
@@ -110,19 +119,21 @@
     transform: translateY(0) !important;
   }
 
-  /* Process Step Progression - Scroll Open */
+  /* Step Cards */
   .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover {
-    box-shadow: 0 12px 40px rgba(5,0,64,0.09) !important;
+    box-shadow: 0 12px 40px rgba(5, 0, 64, 0.09) !important;
+    border-color: rgba(59, 59, 255, 0.2) !important;
+    transform: translateY(-2px) !important;
   }
   .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover .is-step-desc {
     opacity: 1 !important;
-    max-height: 120px !important;
+    max-height: 140px !important;
     margin-top: 8px !important;
     margin-bottom: 12px !important;
   }
   .is-mobile-adaptive-viewport .is-step-card.is-mobile-hover .is-step-points {
     opacity: 1 !important;
-    max-height: 250px !important;
+    max-height: 300px !important;
   }
 }
 
@@ -158,5 +169,223 @@
     width: 100% !important;
     justify-content: center !important;
     text-align: center !important;
+  }
+}
+
+/* ── FIX: Solutions section never blank on mobile ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .snap-section .section-inner {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-xr-card {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ── VIDEO SECTION MOBILE ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-video-snap {
+    padding: 48px 16px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-video-inner {
+    gap: 16px !important;
+    padding: 0 !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-video-el {
+    max-height: 40vh !important;
+    object-fit: cover !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-video-play-btn {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-vc-time {
+    font-size: 11px !important;
+  }
+
+  /* Always show controls on mobile — no hover state on touch */
+  .is-mobile-adaptive-viewport .is-video-controls {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: all !important;
+  }
+}
+/* ── VIDEO SECTION MOBILE ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-video-snap {
+    padding: 48px 16px !important;
+  }
+  .is-mobile-adaptive-viewport .is-video-el {
+    max-height: 40vh !important;
+  }
+  .is-mobile-adaptive-viewport .is-video-controls {
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: all !important;
+  }
+}
+
+/* ── NUCLEAR FIX: force description visible on mobile hover ── */
+@media (max-width: 767px) {
+  .is-problem-card.is-mobile-hover .is-problem-desc {
+    opacity: 1 !important;
+    max-height: 200px !important;
+    margin-top: 8px !important;
+    overflow: visible !important;
+  }
+
+  .is-xr-card.is-mobile-hover .is-xr-card-overlay {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  .is-step-card.is-mobile-hover .is-step-desc {
+    opacity: 1 !important;
+    max-height: 200px !important;
+    margin-top: 8px !important;
+    overflow: visible !important;
+  }
+
+  .is-step-card.is-mobile-hover .is-step-points {
+    opacity: 1 !important;
+    max-height: 300px !important;
+    overflow: visible !important;
+  }
+}
+
+/* Hide the logo inside #menu when menu opens on mobile */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport #menu .logo-watermark {
+    display: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport nav {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 2px 16px rgba(5, 0, 64, 0.06) !important;
+  }
+}
+/* ══════════════════════════════════════════
+   MOBILE FIXES — Hero button + CTA button + Snap height
+   ══════════════════════════════════════════ */
+
+/* ── FIX 1: Hero section min-height so both buttons are always visible ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-hero-snap {
+    min-height: 100svh !important;
+    height: auto !important;
+    padding-top: calc(var(--nav-height, 64px) + 24px) !important;
+    padding-bottom: 40px !important;
+    justify-content: flex-start !important;
+    overflow-y: auto !important;
+  }
+
+  /* Ensure hero body doesn't clip */
+  .is-mobile-adaptive-viewport .is-hero-body {
+    width: 100% !important;
+    padding: 0 20px !important;
+  }
+
+  /* Force both buttons to show — stack vertically */
+  .is-mobile-adaptive-viewport .is-hero-snap .cta-container {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-hero-snap .cta-container button,
+  .is-mobile-adaptive-viewport .is-hero-snap .cta-container a {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ── FIX 2: CTA section — force both buttons visible ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .is-cta-snap {
+    min-height: 100svh !important;
+    height: auto !important;
+    padding-top: 64px !important;
+    padding-bottom: 48px !important;
+    justify-content: center !important;
+    overflow-y: auto !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-cta-snap .section-inner {
+    width: 100% !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-cta-snap .cta-container {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+    align-items: stretch !important;
+    margin-top: 24px !important;
+  }
+
+  .is-mobile-adaptive-viewport .is-cta-snap .cta-container button,
+  .is-mobile-adaptive-viewport .is-cta-snap .cta-container a {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Fix headline overflow */
+  .is-mobile-adaptive-viewport .cta-headline {
+    font-size: clamp(1.6rem, 6.5vw, 2.2rem) !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+  }
+}
+
+/* ── FIX 3: Prevent two sections bleeding into viewport on mobile ── */
+@media (max-width: 767px) {
+  .is-mobile-adaptive-viewport .snap-section {
+    /* Already handled by mobile CSS but ensure no overflow bleeds */
+    overflow-x: hidden !important;
+  }
+
+  /* Hero section specifically: never let next section peek through */
+  .is-mobile-adaptive-viewport .is-hero-snap {
+    border-bottom: 1px solid var(--border, #e2e8f0) !important;
+  }
+
+  /* Video section: cap height so it doesn't overflow */
+  .is-mobile-adaptive-viewport .is-video-snap {
+    min-height: 100svh !important;
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+}
+/* Completely clear out the duplicate nested logo inside #menu when mobile navigation expands */
+@media (max-width: 767px) {
+  #menu .logo-watermark,
+  #menu a.logo-watermark,
+  #menu img.logo-watermark-icon,
+  #menu .logo-text-group {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 }
